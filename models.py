@@ -51,15 +51,10 @@ class User(db.Model):
         nullable=False,
     )
 
-    company_id = db.Column(
-        db.Integer,
-        db.ForeignKey('companies.id', ondelete='CASCADE'),
-        nullable=False,
-    )
 
 
     @classmethod
-    def signup(cls, first_name, last_name, email, username, password, company_id):
+    def signup(cls, first_name, last_name, email, username, password):
         """Signs up user.
 
         Hashes password and adds user to system.
@@ -73,7 +68,6 @@ class User(db.Model):
             email=email,
             username=username,
             password=hashed_pwd
-            company=company_id
         )
 
         db.session.add(user)
@@ -98,3 +92,47 @@ class User(db.Model):
                 return user
 
         return False
+
+
+class Workspace(db.Model):
+    """Workspace model for bolt"""
+
+    __tablename__ = 'workspaces'
+
+    id = db.Column(
+        db.Integer,
+        primary_key=True,
+    )
+
+    name = db.Column(
+        db.Text,
+        nullable=False,
+        unique=True
+    )
+
+class WorkspaceUser(db.Model):
+    """Many to many between workspaces and users"""
+
+    __tablename__ = 'workspaces_users'
+
+    workspace_id = db.Column(
+        db.Integer,
+        db.ForeignKey('workspaces.id', ondelete="cascade"),
+        primary_key = True
+    )
+
+    user_id = db.Column(
+        db.Integer,
+        db.ForeignKey('users.id', ondelete="cascade"),
+        primary_key = True
+    )
+
+
+
+def connect_db(app):
+    """Connect this database to provided Flask app.
+
+    """
+
+    db.app = app
+    db.init_app(app)
