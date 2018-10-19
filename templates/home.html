@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>
+    Modern Software Planning
+</h1>
+<div>
+    {% if g.user %}
+    I'm {{g.user }} and my id is {{ g.user.id }}
+    {% endif %}
+</div>
+
+{% endblock %}

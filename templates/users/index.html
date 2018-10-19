@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% block content %}
+{% if users|length == 0 %}
+<h3>Sorry, no users found</h3>
+{% else %}
+<div class="row justify-content-end">
+  <div class="col-sm-9">
+    <div class="row">
+
+      {% for user in users %}
+
+      <div class="col-lg-4 col-md-6 col-12">
+        <div class="card user-card">
+          <div class="card-inner">
+            <div class="image-wrapper">
+              <img src="{{ user.header_image_url }}" alt="" class="card-hero">
+            </div>
+            <div class="card-contents">
+              <a href="/users/{{ user.id }}" class="card-link">
+                <img src="{{ user.image_url }}" alt="Image for {{ user.username }}" class="card-image">
+                <p>@{{ user.username }}</p>
+              </a>
+
+              {% if g.user %}
+              <div class="container">
+
+                <div class="row">
+
+                  {% if g.user.is_following(user) %}
+                  <form method="POST" class="ml-auto" action="/users/stop-following/{{ user.id }}">
+                    <button class="btn btn-primary btn-sm">Unfollow</button>
+                  </form>
+                  {% else %}
+                  <form method="POST" class="ml-auto" action="/users/follow/{{ user.id }}">
+                    <button class="btn btn-outline-primary btn-sm">Follow</button>
+                  </form>
+                  {% endif %}
+                </div>
+
+                <div class="row">
+                  <form method="POST" class="ml-auto" action="/threads/add/{{ user.id }}">
+                    <button class="btn btn-outline-primary btn-sm">Message</button>
+                  </form>
+                </div>
+
+              </div>
+
+              {% endif %}
+
+
+            </div>
+            <p class="card-bio">{{user.bio}}</p>
+          </div>
+        </div>
+      </div>
+
+      {% endfor %}
+
+    </div>
+  </div>
+</div>
+{% endif %}
+{% endblock %}

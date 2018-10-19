@@ -1,3 +1,5 @@
+import os
+
 from flask import Flask, render_template, request, flash, redirect, session, g, jsonify
 from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError
@@ -13,6 +15,8 @@ app = Flask(__name__)
 # if not set there, use development local db.
 app.config['SQLALCHEMY_DATABASE_URI'] = (
     os.environ.get('DATABASE_URL', 'postgres:///boltv1'))
+
+
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = False
@@ -75,13 +79,12 @@ def signup():
             db.session.commit()
 
         except IntegrityError as e:
+            # need to also handle "Email already taken" errors
             flash("Username already taken", 'danger')
             return render_template('users/signup.html', form=form)
-
         do_login(user)
 
         return redirect("/")
-
     else:
         return render_template('users/signup.html', form=form)
 
@@ -98,7 +101,7 @@ def login():
 
         if user:
             do_login(user)
-            flash(f"Hello, {user.username}!", "success")
+            flash(f"Welcome back, {user.first_name}!", "success")
             return redirect("/")
 
         flash("Invalid credentials.", 'danger')
@@ -121,6 +124,12 @@ def logout():
 # @app.route('/getcurrentuser')
 # def get_curr_user():
 #     return jsonify({'user': session[CURR_USER_KEY]})
+
+
+@app.route('/', methods=["GET"])
+def home():
+    return render_template("home.html")
+
 
 
 @app.route('/users')

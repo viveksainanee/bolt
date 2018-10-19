@@ -1,5 +1,4 @@
-from datetime import datetime
-from flask_crypt import Bcrypt
+from flask_bcrypt import Bcrypt
 from flask_sqlalchemy import SQLAlchemy
 
 bcrypt = Bcrypt()
@@ -133,6 +132,6 @@ def connect_db(app):
     """Connect this database to provided Flask app.
 
     """
-
+    
     db.app = app
     db.init_app(app)
