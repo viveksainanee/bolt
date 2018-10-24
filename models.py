@@ -98,16 +98,20 @@ class Workspace(db.Model):
 
     __tablename__ = 'workspaces'
 
-    id = db.Column(
-        db.Integer,
-        primary_key=True,
+    formatted_name = db.Column(
+        db.Text,
+        primary_key=True
     )
 
-    name = db.Column(
+    readable_name = db.Column(
         db.Text,
         nullable=False,
         unique=True
     )
+
+
+
+
 
 class WorkspaceUser(db.Model):
     """Many to many between workspaces and users"""

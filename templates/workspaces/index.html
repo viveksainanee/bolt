@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block content %}
+{% if workspaces|length == 0 %}
+<h3>Sorry, no workspaces found</h3>
+{% else %}
+<div class="row justify-content-end">
+  <div class="col-sm-9">
+    <div class="row">
+      <ul>
+      {% for workspace in workspaces %}
+        <li> {{workspace.name}}</li>
+      {% endfor %}
+      </ul>
+    </div>
+  </div>
+</div>
+{% endif %}
+<form action="workspaces/add">
+  <input type="submit" value="Add Workspace" />
+</form>
+{% endblock %}

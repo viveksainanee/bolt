@@ -28,7 +28,7 @@ connect_db(app)
 
 
 ##############################################################################
-# User signup/login/logout
+# User getstarted/signup/login/logout
 
 
 @app.before_request
@@ -52,6 +52,12 @@ def do_logout():
     """Logout user."""
     if CURR_USER_KEY in session:
         del session[CURR_USER_KEY]
+
+# @app.route('/get-started', methods=["GET"])
+# def get_started():
+#     """Handle get started page. Allows for user to search for a workspace
+#     and join the correct one """
+#     return render_template
 
 
 @app.route('/signup', methods=["GET", "POST"])
@@ -117,16 +123,12 @@ def logout():
     return redirect("/login")
 
 
+
 ##############################################################################
 # General user routes:
 
-#### DELETE AFTER IF NOT NEEDED ############
-# @app.route('/getcurrentuser')
-# def get_curr_user():
-#     return jsonify({'user': session[CURR_USER_KEY]})
 
-
-@app.route('/', methods=["GET"])
+@app.route('/')
 def home():
     return render_template("home.html")
 
@@ -154,5 +156,69 @@ def users_show(user_id):
     """Show user profile."""
 
     user = User.query.get_or_404(user_id)
-    reactions_number = len(user.reacted_messages)
-    return render_template('users/show.html', user=user, reactions_number=reactions_number)
+    return render_template('users/show.html', user=user)
+
+
+
+##############################################################################
+# Workspace routes:
+
+@app.route('/workspaces/add', methods=["GET", "POST"])
+def add_workspace():
+    """ Handle add workspace form
+
+    - if form not filled out or invalid: show form
+    - if valid: add playlist to SQLA and redirect to worksplaces list
+    """
+
+    form = WorkspaceAddForm()
+
+    #If the form has been submitted and is valid, add the new workspace to the DB
+    if form.validate_on_submit():
+        new_workspace = Workspace(name=form.data['name'])
+        db.session.add(new_workspace)
+        db.session.commit()
+        return redirect('/workspaces')
+    #Otherwise show the new workspace form
+    else:
+        return render_template("workspaces/add-workspace.html", form=form)
+
+    
+
+
+@app.route('/workspaces')
+def list_workspaces():
+    """Page with listing of workspaces.
+
+    Can take a 'q' param in querystring to search by that workspace name.
+    """
+
+    search = request.args.get('q')
+
+    if not search:
+        workspaces = Workspace.query.all()
+    else:
+        workspaces = Workspace.query.filter(Workspace.name.like(f"%{search}%")).all()
+
+    return render_template('workspaces/index.html', workspaces=workspaces)
+
+
+@app.route('/<name>')
+def workspace_show(name):
+    """Show workspace page."""
+
+    workspace = Workspace.query.filter(Workspace.name==name).first()
+    return render_template('workspaces/show.html', workspace=workspace)
+
+
+
+##############################################################################
+# Settings routes:
+
+
+@app.route('/settings')
+def settings():
+    """Show settings page."""
+
+    return render_template('/show.html', workspace=workspace)
+

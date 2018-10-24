@@ -1,26 +1,23 @@
-{% extends 'users/detail.html' %}
-{% block user_details %}
-  <div class="col-sm-6">
-    <ul class="list-group" id="messages">
+{% extends 'base.html' %}
 
-      {% for message in user.messages.order_by('timestamp desc') %}
+{% block content %}
 
-        <li class="list-group-item">
-          <a href="/messages/{{ message.id }}" class="message-link"/>
+  <div class="row justify-content-md-center">
+    <div class="col-md-7 col-lg-5">
+      <img src="{{g.user.img_url}}">
+      id: {{g.user.first_name}}
+      first name: {{g.user.first_name}}
+      last name: {{g.user.last_name}}
+      email: {{g.user.email}}
+      username: {{g.user.username}}
+      bio: {{g.user.bio}}
+      image url:
+      {{g.user.img_url}}
 
-          <a href="/users/{{ user.id }}">
-            <img src="{{ user.image_url }}" alt="user image" class="timeline-image">
-          </a>
+      No update supported yet.
 
-          <div class="message-area">
-            <a href="/users/{{ user.id }}">@{{ user.username }}</a>
-            <span class="text-muted">{{ message.timestamp.strftime('%d %B %Y') }}</span>
-            <p>{{ message.text }}</p>
-          </div>
-        </li>
 
-      {% endfor %}
-
-    </ul>
+    </div>
   </div>
+
 {% endblock %}
