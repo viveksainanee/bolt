@@ -206,8 +206,9 @@ def list_workspaces():
 @app.route('/<name>')
 def workspace_show(name):
     """Show workspace page."""
+    workspace=[]
 
-    workspace = Workspace.query.filter(Workspace.name==name).first()
+    # workspace = Workspace.query.filter(Workspace.name==name).first()
     return render_template('workspaces/show.html', workspace=workspace)
 
 
