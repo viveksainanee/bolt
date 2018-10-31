@@ -16,12 +16,15 @@ Workspace.query.delete()
 
 # Add users
 hashed_pwd = bcrypt.generate_password_hash("testtest").decode('UTF-8')
-u1 = User(first_name="Jon", last_name="Snow", email="jsnow@winterfell.com", username="jsnow", password=hashed_pwd)
-u2 = User(first_name="Jamie", last_name="Lannister", e  mail="jlannister@rock.com", username="jlannister", password=hashed_pwd)
+u1 = User(first_name="Jon", last_name="Snow",
+          email="jsnow@winterfell.com", username="jsnow", password=hashed_pwd)
+u2 = User(first_name="Jamie", last_name="Lannister",
+          email="jlannister@rock.com", username="jlannister", password=hashed_pwd)
 
 
 # Add workspaces
-w1 = Workspace(formatted_name="my.first.workspace", readable_name="My First Workspace")
+w1 = Workspace(formatted_name="my.first.workspace",
+               readable_name="My First Workspace")
 w2 = Workspace(formatted_name="spotify", readable_name="Spotify")
 
 # Add new objects to session, so they'll persist
