@@ -1,6 +1,6 @@
 """Seed database with sample data from CSV Files."""
 
-from models import User, Workspace, db
+from models import User, Workspace, db, Team
 from flask_bcrypt import Bcrypt
 from app import app
 
@@ -26,6 +26,10 @@ u2 = User(first_name="Jamie", last_name="Lannister",
 w1 = Workspace(formatted_name="my.first.workspace",
                readable_name="My First Workspace")
 w2 = Workspace(formatted_name="spotify", readable_name="Spotify")
+
+# Add teams
+t1 = Team(name="playlist", workspace_name="spotify")
+t1 = Team(name="formatting", workspace_name="my.first.workspace")
 
 # Add new objects to session, so they'll persist
 db.session.add(u1)
