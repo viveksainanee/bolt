@@ -10,7 +10,6 @@ class UserAddForm(FlaskForm):
     first_name = StringField('First name', validators=[DataRequired()])
     last_name = StringField('Last name', validators=[DataRequired()])
     email = StringField('Email', validators=[DataRequired(), Email()])
-    username = StringField('Username', validators=[DataRequired()])
     password = PasswordField('Password', validators=[Length(min=6)])
 
 
@@ -24,7 +23,6 @@ class LoginForm(FlaskForm):
 
 class WorkspaceAddForm(FlaskForm):
     """Form for adding workspaces."""
-
     readable_name = StringField('Readable Name', validators=[DataRequired()])
     formatted_name = StringField('Formatted Name', validators=[DataRequired()])
     

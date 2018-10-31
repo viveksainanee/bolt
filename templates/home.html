@@ -1,17 +1,37 @@
 {% extends 'base.html' %}
 {% block content %}
 
-<div class="page"> 
-<h1>
-    Home
-</h1>
-<div>
-    {% if g.user %}
-    I'm {{g.user.first_name }} {{ g.user.last_name }} and my userID is {{g.user.id}}
-    {% endif %}
+<div class="page">
+    <h1>
+        {% if g.user %}
+        Home
+        {% else %}
+        Bolt - Modern Planning
 
-    <p> We're going to put stuff on the homepage for personal dashboard.</p> 
+        {% endif %}
+
+    </h1>
+    <div>
+        {% if g.user %}
+        I'm {{g.user.first_name }} {{ g.user.last_name }} and my userID is {{g.user.id}}
+        {% else %}
+
+        <p> Bolt is a modern tool for software planning</p>
+        <div> <ul> 
+        <li>Plan visually</li>
+        <li>Easy task management</li>
+        <li>Assignment suggestions as you type</li>
+
+        <li>Beautiful analytics</li>
+    </ul>
 </div>
+
+
+
+        {% endif %}
+
+        
+    </div>
 
 </div>
 

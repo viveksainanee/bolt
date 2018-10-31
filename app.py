@@ -75,11 +75,13 @@ def signup():
     form = UserAddForm()
     if form.validate_on_submit():
         try:
+            username = generate_username(form.data['first_name'], form.data['last_name'])
+
             user = User.signup(
                 first_name=form.data['first_name'],
                 last_name=form.data['last_name'],
                 email=form.data['email'],
-                username=form.data['username'],
+                username=username,
                 password=form.data['password']
             )
             db.session.commit()
@@ -93,6 +95,10 @@ def signup():
         return redirect("/")
     else:
         return render_template('users/signup.html', form=form)
+
+def generate_username(first_name, last_name):
+    #need to update to take out bad characters in a url
+    return first_name + "." + last_name
 
 
 @app.route('/login', methods=["GET", "POST"])
