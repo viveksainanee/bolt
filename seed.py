@@ -29,13 +29,15 @@ w2 = Workspace(formatted_name="spotify", readable_name="Spotify")
 
 # Add teams
 t1 = Team(name="playlist", workspace_name="spotify")
-t1 = Team(name="formatting", workspace_name="my.first.workspace")
+t2 = Team(name="formatting", workspace_name="my.first.workspace")
 
 # Add new objects to session, so they'll persist
 db.session.add(u1)
 db.session.add(u2)
 db.session.add(w1)
 db.session.add(w2)
+db.session.add(t1)
+db.session.add(t2)
 
 # Commit--otherwise, this never gets saved!
 db.session.commit()
