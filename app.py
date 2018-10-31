@@ -17,11 +17,11 @@ app.config['SQLALCHEMY_DATABASE_URI'] = (
     os.environ.get('DATABASE_URL', 'postgres:///boltv1'))
 
 
-
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = False
 app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', "it's a secret")
+app.config['SERVER_NAME'] = 'localhost.com:5000'
 toolbar = DebugToolbarExtension(app)
 
 connect_db(app)
@@ -75,7 +75,8 @@ def signup():
     form = UserAddForm()
     if form.validate_on_submit():
         try:
-            username = generate_username(form.data['first_name'], form.data['last_name'])
+            username = generate_username(
+                form.data['first_name'], form.data['last_name'])
 
             user = User.signup(
                 first_name=form.data['first_name'],
@@ -96,8 +97,9 @@ def signup():
     else:
         return render_template('users/signup.html', form=form)
 
+
 def generate_username(first_name, last_name):
-    #need to update to take out bad characters in a url
+    # need to update to take out bad characters in a url
     return first_name + "." + last_name
 
 
@@ -129,7 +131,6 @@ def logout():
     return redirect("/login")
 
 
-
 ##############################################################################
 # General user routes:
 
@@ -137,7 +138,6 @@ def logout():
 @app.route('/')
 def home():
     return render_template("home.html")
-
 
 
 @app.route('/users')
@@ -165,7 +165,6 @@ def users_show(user_id):
     return render_template('users/show.html', user=user)
 
 
-
 ##############################################################################
 # Workspace routes:
 
@@ -179,17 +178,16 @@ def add_workspace():
 
     form = WorkspaceAddForm()
 
-    #If the form has been submitted and is valid, add the new workspace to the DB
+    # If the form has been submitted and is valid, add the new workspace to the DB
     if form.validate_on_submit():
-        new_workspace = Workspace(formatted_name=form.data['formatted_name'], readable_name=form.data['readable_name'])
+        new_workspace = Workspace(
+            formatted_name=form.data['formatted_name'], readable_name=form.data['readable_name'])
         db.session.add(new_workspace)
         db.session.commit()
         return redirect('/workspaces')
-    #Otherwise show the new workspace form
+    # Otherwise show the new workspace form
     else:
         return render_template("workspaces/add-workspace.html", form=form)
-
-    
 
 
 @app.route('/workspaces')
@@ -204,19 +202,19 @@ def list_workspaces():
     if not search:
         workspaces = Workspace.query.all()
     else:
-        workspaces = Workspace.query.filter(Workspace.name.like(f"%{search}%")).all()
+        workspaces = Workspace.query.filter(
+            Workspace.name.like(f"%{search}%")).all()
 
     return render_template('workspaces/index.html', workspaces=workspaces)
 
 
-@app.route('/<name>')
+# @app.route('/<name>')
+@app.route('/', subdomain='<name>')
 def workspace_show(name):
     """Show workspace page."""
-    workspace=[]
-
-    # workspace = Workspace.query.filter(Workspace.name==name).first()
+    workspace = Workspace.query.filter(
+        Workspace.formatted_name == name).first()
     return render_template('workspaces/show.html', workspace=workspace)
-
 
 
 ##############################################################################
@@ -228,4 +226,3 @@ def settings():
     """Show settings page."""
 
     return render_template('/show.html', workspace=workspace)
-

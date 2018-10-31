@@ -4,6 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 bcrypt = Bcrypt()
 db = SQLAlchemy()
 
+
 class User(db.Model):
     """User for bolt"""
 
@@ -49,8 +50,6 @@ class User(db.Model):
         db.Text,
         nullable=False,
     )
-
-
 
     @classmethod
     def signup(cls, first_name, last_name, email, username, password):
@@ -110,7 +109,20 @@ class Workspace(db.Model):
     )
 
 
+class Team(db.Model):
+    """Team model for bolt"""
 
+    __tablename__ = 'teams'
+
+    id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+
+    name = db.Column(db.Text, nullable=False)
+
+    workspace_name = db.Column(
+        db.Text,
+        db.ForeignKey('workspaces.formatted_name', ondelete="cascade"),
+        nullable=False
+    )
 
 
 # class WorkspaceUser(db.Model):
@@ -131,11 +143,10 @@ class Workspace(db.Model):
 #     )
 
 
-
 def connect_db(app):
     """Connect this database to provided Flask app.
 
     """
-    
+
     db.app = app
     db.init_app(app)
