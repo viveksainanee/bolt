@@ -109,14 +109,20 @@ class Workspace(db.Model):
     )
 
 
-# class Team(db.model):
-#     """Team model for bolt"""
+class Team(db.Model):
+    """Team model for bolt"""
 
-#     __tablename__ = 'teams'
+    __tablename__ = 'teams'
 
-#     id = db.Column(db.Integer,autoincrement=True)
+    id = db.Column(db.Integer, autoincrement=True, primary_key=True)
 
-#     name =
+    name = db.Column(db.Text, nullable=False)
+
+    workspace_name = db.Column(
+        db.Text,
+        db.ForeignKey('workspaces.formatted_name', ondelete="cascade"),
+        nullable=False
+    )
 
 
 # class WorkspaceUser(db.Model):
