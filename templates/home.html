@@ -1,12 +1,18 @@
 {% extends 'base.html' %}
 {% block content %}
+
+<div class="page"> 
 <h1>
-    Modern Software Planning
+    Home
 </h1>
 <div>
     {% if g.user %}
-    I'm {{g.user }} and my id is {{ g.user.id }}
+    I'm {{g.user.first_name }} {{ g.user.last_name }} and my userID is {{g.user.id}}
     {% endif %}
+
+    <p> We're going to put stuff on the homepage for personal dashboard.</p> 
+</div>
+
 </div>
 
 {% endblock %}

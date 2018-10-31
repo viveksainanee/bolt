@@ -8,30 +8,42 @@
     <link rel="stylesheet" href="https://unpkg.com/bootstrap/dist/css/bootstrap.css">
     <script src="https://unpkg.com/jquery"></script>
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:300,700" rel="stylesheet">
     <link rel="stylesheet" href="/static/stylesheets/style.css">
 </head>
 
 <body>
 
-    <nav class="navbar navbar-light bg-primary justify-content-between">
-        <a class="navbar-brand"><i class="fas fa-bolt"></i>bolt</a>
-        <ul class="nav navbar-nav navbar-right">
+    <nav class="navbar flex-column">
+        <a class="navbar-brand"><i class="fas fa-bolt"></i></a>
+        <ul class="nav">
 
             {% if not g.user %}
-            <li><a href="/signup">Sign up</a></li>
-            <li><a href="/login">Log in</a></li>
+
+            <li class="nav-item">
+                <a class="nav-link active" href="/signup">Sign Up</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/login">Log In</a>
+            </li>
             {% else %}
-            <li><a href="/logout">Log out</a></li>
+
+            <li class="nav-item">
+                <a class="nav-link" href="/logout">Log Out</a>
+            </li>
             {% endif %}
+
         </ul>
 
     </nav>
-    {% for category, message in get_flashed_messages(with_categories=True) %}
-    <div class="alert alert-{{ category }}">{{ message }}</div>
-    {% endfor %}
+    <div>
+        {% for category, message in get_flashed_messages(with_categories=True) %}
+        <div class="alert alert-{{ category }}">{{ message }}</div>
+        {% endfor %}
 
-    {% block content %}
-    {% endblock %}
+        {% block content %}
+        {% endblock %}
+    </div>
 
 </body>
 

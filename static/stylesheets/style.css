@@ -1,3 +1,30 @@
-a {
-  color: black;
+html,
+body {
+  margin: 0;
+  height: 100%;
+}
+
+body {
+  display: flex;
+  flex-direction: row;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: lighter;
+  background-color: #222222;
+  color: white;
+}
+
+nav {
+  width: 100px;
+  height: 100%;
+  background-color: #2a547d;
+}
+
+.page {
+  margin: 100px;
+}
+
+h1 {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: bold;
+  font-size: 80px;
 }
