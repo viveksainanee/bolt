@@ -175,7 +175,7 @@ def add_workspace():
 
     #If the form has been submitted and is valid, add the new workspace to the DB
     if form.validate_on_submit():
-        new_workspace = Workspace(name=form.data['name'])
+        new_workspace = Workspace(formatted_name=form.data['formatted_name'], readable_name=form.data['readable_name'])
         db.session.add(new_workspace)
         db.session.commit()
         return redirect('/workspaces')

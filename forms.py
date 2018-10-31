@@ -25,5 +25,6 @@ class LoginForm(FlaskForm):
 class WorkspaceAddForm(FlaskForm):
     """Form for adding workspaces."""
 
-    name = StringField('Name', validators=[DataRequired()])
+    readable_name = StringField('Readable Name', validators=[DataRequired()])
+    formatted_name = StringField('Formatted Name', validators=[DataRequired()])
     
