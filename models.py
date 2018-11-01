@@ -125,22 +125,22 @@ class Team(db.Model):
     )
 
 
-# class WorkspaceUser(db.Model):
-#     """Many to many between workspaces and users"""
+class WorkspaceUser(db.Model):
+    """Many to many between workspaces and users"""
 
-#     __tablename__ = 'workspaces_users'
+    __tablename__ = 'workspaces_users'
 
-#     workspace_formatted_name = db.Column(
-#         db.Integer,
-#         db.ForeignKey('workspaces.formatted_name', ondelete="cascade"),
-#         primary_key = True
-#     )
+    workspace_formatted_name = db.Column(
+        db.Text,
+        db.ForeignKey('workspaces.formatted_name', ondelete="cascade"),
+        primary_key = True
+    )
 
-#     user_id = db.Column(
-#         db.Integer,
-#         db.ForeignKey('users.id', ondelete="cascade"),
-#         primary_key = True
-#     )
+    user_id = db.Column(
+        db.Integer,
+        db.ForeignKey('users.id', ondelete="cascade"),
+        primary_key = True
+    )
 
 
 def connect_db(app):
