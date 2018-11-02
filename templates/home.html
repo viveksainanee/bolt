@@ -4,7 +4,7 @@
 <div class="page">
     <h1>
         {% if g.user %}
-        Home
+        My Workspaces
         {% else %}
         Bolt - Modern Planning
 
@@ -13,24 +13,32 @@
     </h1>
     <div>
         {% if g.user %}
-        I'm {{g.user.first_name }} {{ g.user.last_name }} and my userID is {{g.user.id}}
+        
+        {% for workspace_user in workspace_users %}
+
+        {{workspace_user.workspace_formatted_name}}
+
+        {% endfor %}
+
+        
         {% else %}
 
         <p> Bolt is a modern tool for software planning</p>
-        <div> <ul> 
-        <li>Plan visually</li>
-        <li>Easy task management</li>
-        <li>Assignment suggestions as you type</li>
+        <div>
+            <ul>
+                <li>Plan visually</li>
+                <li>Easy task management</li>
+                <li>Assignment suggestions as you type</li>
 
-        <li>Beautiful analytics</li>
-    </ul>
-</div>
+                <li>Beautiful analytics</li>
+            </ul>
+        </div>
 
 
 
         {% endif %}
 
-        
+
     </div>
 
 </div>

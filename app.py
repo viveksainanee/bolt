@@ -5,7 +5,7 @@ from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError
 
 from forms import UserAddForm, WorkspaceAddForm, LoginForm
-from models import db, connect_db, User, Workspace
+from models import db, connect_db, User, Workspace, WorkspaceUser
 
 CURR_USER_KEY = "curr_user"
 
@@ -137,8 +137,11 @@ def logout():
 
 @app.route('/')
 def home():
-    return render_template("home.html")
-
+    workspace_users=[]
+    if g.user:
+        workspace_users = WorkspaceUser.query.filter(
+        WorkspaceUser.user_id == g.user.id).all()
+    return render_template("home.html", workspace_users=workspace_users)
 
 @app.route('/users')
 def list_users():
@@ -217,12 +220,3 @@ def workspace_show(name):
     return render_template('workspaces/show.html', workspace=workspace)
 
 
-##############################################################################
-# Settings routes:
-
-
-@app.route('/settings')
-def settings():
-    """Show settings page."""
-
-    return render_template('/show.html', workspace=workspace)
