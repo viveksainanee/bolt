@@ -1,6 +1,6 @@
 """Seed database with sample data from CSV Files."""
 
-from models import User, Workspace, db, Team, WorkspaceUser
+from models import db, User, Workspace, Team, WorkspaceUser, Segment, Member
 from flask_bcrypt import Bcrypt
 from app import app
 
@@ -55,6 +55,34 @@ wu2 = WorkspaceUser(workspace_formatted_name="spotify",
 db.session.add(t1)
 db.session.add(t2)
 db.session.add(wu1)
+db.session.add(wu2)
+
+db.session.commit()
+
+
+# Add segments to teams
+s1 = Segment(team_id=t1.id, name="Design", lead=u1.id)
+s2 = Segment(team_id=t1.id, name="Engineering", lead=u1.id)
+s3 = Segment(team_id=t1.id, name="Product", lead=u2.id)
+
+# Add new objects to session, so they'll persist
+db.session.add(s1)
+db.session.add(s2)
+db.session.add(s3)
+
+# Commit--otherwise, this never gets saved!
+db.session.commit()
+
+
+# Add members to teams
+m1 = Member(role="Designer", user_id=u1.id, segment_id=s1.id)
+m2 = Member(role="Engineer", user_id=u1.id, segment_id=s2.id)
+m3 = Member(role="Product Manager", user_id=u2.id, segment_id=s3.id)
+
+# Add new objects to session, so they'll persist
+db.session.add(m1)
+db.session.add(m2)
+db.session.add(m3)
 
 # Commit--otherwise, this never gets saved!
 db.session.commit()
