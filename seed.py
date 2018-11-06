@@ -48,6 +48,9 @@ t2 = Team(name="formatting", workspace_name="my.first.workspace")
 wu1 = WorkspaceUser(workspace_formatted_name="my.first.workspace",
                     user_id=u1.id)
 
+wu2 = WorkspaceUser(workspace_formatted_name="spotify",
+                    user_id=u1.id)
+
 # Add new objects to session, so they'll persist
 db.session.add(t1)
 db.session.add(t2)
