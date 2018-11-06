@@ -143,10 +143,10 @@ class WorkspaceUser(db.Model):
     )
 
 
-class Functions(db.Model):
-    """A team can have many functions, such as design, engineering, and pm"""
+class Segment(db.Model):
+    """A team can have many segment, such as design, engineering, and pm"""
 
-    __tablename__ = 'functions'
+    __tablename__ = 'segments'
 
     id = db.Column(db.Integer, autoincrement=True, primary_key=True)
 
@@ -163,8 +163,8 @@ class Functions(db.Model):
     )
 
 
-class Members(db.Model):
-    """A person can be a member of a function, like Design on the spotify playlist team """
+class Member(db.Model):
+    """A person can be a member of a segment, like Design on the spotify playlist team """
 
     __tablename__ = 'members'
 
@@ -177,9 +177,9 @@ class Members(db.Model):
         db.ForeignKey('users.id', ondelete="cascade")
     )
 
-    function_id = db.Column(
+    segment_id = db.Column(
         db.Integer,
-        db.ForeignKey('functions.id', ondelete="cascade")
+        db.ForeignKey('segments.id', ondelete="cascade")
     )
 
 
