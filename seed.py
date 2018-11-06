@@ -46,7 +46,10 @@ t2 = Team(name="formatting", workspace_name="my.first.workspace")
 
 # Add Jon to My First Workspace
 wu1 = WorkspaceUser(workspace_formatted_name="my.first.workspace",
-               user_id=u1.id)
+                    user_id=u1.id)
+
+wu2 = WorkspaceUser(workspace_formatted_name="spotify",
+                    user_id=u1.id)
 
 # Add new objects to session, so they'll persist
 db.session.add(t1)
@@ -55,6 +58,3 @@ db.session.add(wu1)
 
 # Commit--otherwise, this never gets saved!
 db.session.commit()
-
-
-
