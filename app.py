@@ -232,8 +232,7 @@ def workspace_show(name):
 def get_teams(workspace):
     """Get all teams"""
     teams = Team.query.filter(Team.workspace_name == workspace).all()
-    returnTeams = [team.name for team in teams]
-    return jsonify({'data': returnTeams})
+    return jsonify({'data': [team.name for team in teams]})
 
 
 @app.route('/teams/<int:id>', subdomain='<workspace>', methods=["GET"])
