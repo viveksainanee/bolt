@@ -133,13 +133,53 @@ class WorkspaceUser(db.Model):
     workspace_formatted_name = db.Column(
         db.Text,
         db.ForeignKey('workspaces.formatted_name', ondelete="cascade"),
-        primary_key = True
+        primary_key=True
     )
 
     user_id = db.Column(
         db.Integer,
         db.ForeignKey('users.id', ondelete="cascade"),
-        primary_key = True
+        primary_key=True
+    )
+
+
+class Functions(db.Model):
+    """A team can have many functions, such as design, engineering, and pm"""
+
+    __tablename__ = 'functions'
+
+    id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+
+    team_id = db.Column(
+        db.Integer,
+        db.ForeignKey('teams.id', ondelete="cascade"), nullable=False
+    )
+
+    name = db.Column(db.Text, nullable=False)
+
+    lead = db.Column(
+        db.Integer,
+        db.ForeignKey('users.id', ondelete="cascade"), nullable=False
+    )
+
+
+class Members(db.Model):
+    """A person can be a member of a function, like Design on the spotify playlist team """
+
+    __tablename__ = 'members'
+
+    id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+
+    role = db.Column(db.Text, nullable=False)
+
+    user_id = db.Column(
+        db.Integer,
+        db.ForeignKey('users.id', ondelete="cascade")
+    )
+
+    function_id = db.Column(
+        db.Integer,
+        db.ForeignKey('functions.id', ondelete="cascade")
     )
 
 

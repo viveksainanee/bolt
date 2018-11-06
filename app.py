@@ -102,6 +102,10 @@ def generate_username(first_name, last_name):
     # need to update to take out bad characters in a url
     return first_name + "." + last_name
 
+def generate_workspace_formatted_name(readable_name):
+    # need to update to take out bad characters in a url
+    return '.'.join(readable_name.split(' '))
+
 
 @app.route('/login', methods=["GET", "POST"])
 def login():
@@ -184,7 +188,7 @@ def add_workspace():
     # If the form has been submitted and is valid, add the new workspace to the DB
     if form.validate_on_submit():
         new_workspace = Workspace(
-            formatted_name=form.data['formatted_name'], readable_name=form.data['readable_name'])
+            formatted_name=generate_workspace_formatted_name(form.data['readable_name']), readable_name=form.data['readable_name'])
         db.session.add(new_workspace)
         db.session.commit()
         return redirect('/workspaces')
