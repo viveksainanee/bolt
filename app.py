@@ -4,8 +4,8 @@ from flask import Flask, render_template, request, flash, redirect, session, g, 
 from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError
 
-from forms import UserAddForm, WorkspaceAddForm, LoginForm
-from models import db, connect_db, User, Workspace, WorkspaceUser
+from forms import UserAddForm, WorkspaceAddForm, LoginForm, TeamAddUpdateForm
+from models import db, connect_db, User, Workspace, WorkspaceUser, Team
 
 CURR_USER_KEY = "curr_user"
 
@@ -102,6 +102,7 @@ def generate_username(first_name, last_name):
     # need to update to take out bad characters in a url
     return first_name + "." + last_name
 
+
 def generate_workspace_formatted_name(readable_name):
     # need to update to take out bad characters in a url
     return '.'.join(readable_name.split(' '))
@@ -141,11 +142,12 @@ def logout():
 
 @app.route('/')
 def home():
-    workspace_users=[]
+    workspace_users = []
     if g.user:
         workspace_users = WorkspaceUser.query.filter(
-        WorkspaceUser.user_id == g.user.id).all()
+            WorkspaceUser.user_id == g.user.id).all()
     return render_template("home.html", workspace_users=workspace_users)
+
 
 @app.route('/users')
 def list_users():
@@ -224,3 +226,59 @@ def workspace_show(name):
     return render_template('workspaces/show.html', workspace=workspace)
 
 
+#####################################################################################
+# Team routes
+@app.route('/teams', subdomain='<workspace>', methods=["GET"])
+def get_teams(workspace):
+    """Get all teams"""
+    teams = Team.query.filter(Team.workspace_name == workspace).all()
+    return jsonify({'data': [team.name for team in teams]})
+
+
+@app.route('/teams/<int:id>', subdomain='<workspace>', methods=["GET"])
+def get_team(workspace, id):
+    """Get a single team"""
+    team = Team.query.filter(Team.workspace_name ==
+                             workspace, Team.id == id).first()
+    if(not team):
+        return jsonify({'errors': 'team not found'}), 404
+    return jsonify({'data': team.name})
+
+
+@app.route('/teams', subdomain='<workspace>', methods=["POST"])
+def add_team(workspace):
+    """Add a team"""
+    form = TeamAddUpdateForm(csrf_enabled=False, data=request.json)
+    if(form.validate()):
+        name = form.data['name']
+        team = Team(name=name, workspace_name=workspace)
+        db.session.add(team)
+        db.session.commit()
+        return jsonify({'data': name})
+    return jsonify({'errors': form.errors}), 400
+
+
+@app.route('/teams/<int:id>', subdomain='<workspace>', methods=["PATCH"])
+def update_team(workspace, id):
+    """Update team name"""
+    form = TeamAddUpdateForm(csrf_enabled=False, data=request.json)
+    if(form.validate()):
+        team = Team.query.filter(Team.workspace_name ==
+                                 workspace, Team.id == id).first()
+        team.name = form.data['name']
+        db.session.commit()
+        return jsonify({'data': team.name})
+    return jsonify({'errors': form.errors}), 400
+
+
+@app.route('/teams/<int:id>', subdomain='<workspace>', methods=["DELETE"])
+def delete_team(workspace, id):
+    """Delete a team"""
+    team = Team.query.filter(Team.workspace_name ==
+                             workspace, Team.id == id).first()
+    if(not team):
+        return jsonify({'errors': 'team not found'}), 404
+
+    db.session.delete(team)
+    db.session.commit()
+    return jsonify({'data': 'team deleted'})
