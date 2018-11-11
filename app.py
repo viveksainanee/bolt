@@ -3,6 +3,7 @@ import os
 from flask import Flask, render_template, request, flash, redirect, session, g, jsonify
 from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError
+from flask_bcrypt import Bcrypt
 
 from forms import UserAddForm, WorkspaceAddForm, LoginForm, TeamAddUpdateForm
 from models import db, connect_db, User, Workspace, WorkspaceUser, Team
@@ -149,29 +150,104 @@ def home():
     return render_template("home.html", workspace_users=workspace_users)
 
 
-@app.route('/users')
-def list_users():
-    """Page with listing of users.
+# @app.route('/users')
+# def list_users():
+#     """Page with listing of users.
 
-    Can take a 'q' param in querystring to search by that username.
-    """
+#     Can take a 'q' param in querystring to search by that username.
+#     """
 
-    search = request.args.get('q')
+#     search = request.args.get('q')
 
-    if not search:
-        users = User.query.all()
-    else:
-        users = User.query.filter(User.username.like(f"%{search}%")).all()
+#     if not search:
+#         users = User.query.all()
+#     else:
+#         users = User.query.filter(User.username.like(f"%{search}%")).all()
 
-    return render_template('users/index.html', users=users)
+#     return render_template('users/index.html', users=users)
 
 
 @app.route('/users/<int:user_id>')
 def users_show(user_id):
     """Show user profile."""
-
     user = User.query.get_or_404(user_id)
     return render_template('users/show.html', user=user)
+
+#####################################################################################
+# User API routes
+
+# Get All Users
+
+
+@app.route('/users', methods=["GET"])
+def get_users():
+    """Get all users"""
+    users = User.query.all()
+    return jsonify({'data': [
+        {"id": user.id,
+            "firstName": user.first_name,
+         "lastName": user.last_name,
+         "email": user.email,
+         "username": user.username,
+         "imageUrl": user.image_url,
+         "bio": user.bio
+         } for user in users]})
+
+
+# Add a new user
+
+@app.route('/users', methods=["POST"])
+def add_user():
+    """Add a user"""
+    form = UserAddForm(csrf_enabled=False, data=request.json)
+    if(form.validate()):
+        first_name = form.data['first_name']
+        last_name = form.data['last_name']
+        email = form.data['email']
+        password = bcrypt.generate_password_hash(
+            form.data['password']).decode('UTF-8')
+
+    user = User(name=name, workspace_name=workspace)
+    db.session.add(team)
+    db.session.commit()
+    return jsonify({'data': name})
+    return jsonify({'errors': form.errors}), 400
+
+
+# @app.route('/teams/<int:id>', subdomain='<workspace>', methods=["GET"])
+# def get_team(workspace, id):
+#     """Get a single team"""
+#     team = Team.query.filter(Team.workspace_name ==
+#                              workspace, Team.id == id).first()
+#     if(not team):
+#         return jsonify({'errors': 'team not found'}), 404
+#     return jsonify({'data': team.name})
+
+
+# @app.route('/teams/<int:id>', subdomain='<workspace>', methods=["PATCH"])
+# def update_team(workspace, id):
+#     """Update team name"""
+#     form = TeamAddUpdateForm(csrf_enabled=False, data=request.json)
+#     if(form.validate()):
+#         team = Team.query.filter(Team.workspace_name ==
+#                                  workspace, Team.id == id).first()
+#         team.name = form.data['name']
+#         db.session.commit()
+#         return jsonify({'data': team.name})
+#     return jsonify({'errors': form.errors}), 400
+
+
+# @app.route('/teams/<int:id>', subdomain='<workspace>', methods=["DELETE"])
+# def delete_team(workspace, id):
+#     """Delete a team"""
+#     team = Team.query.filter(Team.workspace_name ==
+#                              workspace, Team.id == id).first()
+#     if(not team):
+#         return jsonify({'errors': 'team not found'}), 404
+
+#     db.session.delete(team)
+#     db.session.commit()
+#     return jsonify({'data': 'team deleted'})
 
 
 ##############################################################################
