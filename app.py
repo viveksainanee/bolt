@@ -5,7 +5,10 @@ from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError
 from flask_bcrypt import Bcrypt
 
-from forms import UserAddForm, WorkspaceAddForm, LoginForm, TeamAddUpdateForm
+bcrypt = Bcrypt()
+
+
+from forms import UserAddUpdateForm, WorkspaceAddForm, LoginForm, TeamAddUpdateForm
 from models import db, connect_db, User, Workspace, WorkspaceUser, Team
 
 CURR_USER_KEY = "curr_user"
@@ -14,15 +17,16 @@ app = Flask(__name__)
 
 # Get DB_URI from environ variable (useful for production/testing) or,
 # if not set there, use development local db.
-app.config['SQLALCHEMY_DATABASE_URI'] = (
-    os.environ.get('DATABASE_URL', 'postgres:///boltv1'))
+app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get(
+    "DATABASE_URL", "postgres:///boltv1"
+)
 
 
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SQLALCHEMY_ECHO'] = False
-app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
-app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', "it's a secret")
-app.config['SERVER_NAME'] = 'localhost.com:5000'
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+app.config["SQLALCHEMY_ECHO"] = False
+app.config["DEBUG_TB_INTERCEPT_REDIRECTS"] = False
+app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "it's a secret")
+app.config["SERVER_NAME"] = "localhost.com:5000"
 toolbar = DebugToolbarExtension(app)
 
 connect_db(app)
@@ -54,6 +58,7 @@ def do_logout():
     if CURR_USER_KEY in session:
         del session[CURR_USER_KEY]
 
+
 # @app.route('/get-started', methods=["GET"])
 # def get_started():
 #     """Handle get started page. Allows for user to search for a workspace
@@ -61,79 +66,69 @@ def do_logout():
 #     return render_template
 
 
-@app.route('/signup', methods=["GET", "POST"])
-def signup():
-    """Handle user signup.
+# @app.route("/signup", methods=["GET", "POST"])
+# def signup():
+#     """Handle user signup.
 
-    Create new user and add to DB. Redirect to home page.
+#     Create new user and add to DB. Redirect to home page.
 
-    If form not valid, present form.
+#     If form not valid, present form.
 
-    If the there already is a user with that username: flash message
-    and re-present form.
-    """
+#     If the there already is a user with that username: flash message
+#     and re-present form.
+#     """
 
-    form = UserAddForm()
-    if form.validate_on_submit():
-        try:
-            username = generate_username(
-                form.data['first_name'], form.data['last_name'])
+#     form = UserAddForm()
+#     if form.validate_on_submit():
+#         try:
+#             username = generate_username(
+#                 form.data["first_name"], form.data["last_name"]
+#             )
 
-            user = User.signup(
-                first_name=form.data['first_name'],
-                last_name=form.data['last_name'],
-                email=form.data['email'],
-                username=username,
-                password=form.data['password']
-            )
-            db.session.commit()
+#             user = User.signup(
+#                 first_name=form.data["first_name"],
+#                 last_name=form.data["last_name"],
+#                 email=form.data["email"],
+#                 username=username,
+#                 password=form.data["password"],
+#             )
+#             db.session.commit()
 
-        except IntegrityError as e:
-            # need to also handle "Email already taken" errors
-            flash("Username already taken", 'danger')
-            return render_template('users/signup.html', form=form)
-        do_login(user)
+#         except IntegrityError as e:
+#             # need to also handle "Email already taken" errors
+#             flash("Username already taken", "danger")
+#             return render_template("users/signup.html", form=form)
+#         do_login(user)
 
-        return redirect("/")
-    else:
-        return render_template('users/signup.html', form=form)
-
-
-def generate_username(first_name, last_name):
-    # need to update to take out bad characters in a url
-    return first_name + "." + last_name
+#         return redirect("/")
+#     else:
+#         return render_template("users/signup.html", form=form)
 
 
-def generate_workspace_formatted_name(readable_name):
-    # need to update to take out bad characters in a url
-    return '.'.join(readable_name.split(' '))
-
-
-@app.route('/login', methods=["GET", "POST"])
+@app.route("/login", methods=["GET", "POST"])
 def login():
     """Handle user login."""
 
     form = LoginForm()
 
     if form.validate_on_submit():
-        user = User.authenticate(form.data['username'],
-                                 form.data['password'])
+        user = User.authenticate(form.data["username"], form.data["password"])
 
         if user:
             do_login(user)
             flash(f"Welcome back, {user.first_name}!", "success")
             return redirect("/")
 
-        flash("Invalid credentials.", 'danger')
+        flash("Invalid credentials.", "danger")
 
-    return render_template('users/login.html', form=form)
+    return render_template("users/login.html", form=form)
 
 
-@app.route('/logout')
+@app.route("/logout")
 def logout():
     """Handle logout of user."""
     do_logout()
-    flash('Logged out successfully.', 'success')
+    flash("Logged out successfully.", "success")
     return redirect("/login")
 
 
@@ -141,12 +136,13 @@ def logout():
 # General user routes:
 
 
-@app.route('/')
+@app.route("/")
 def home():
     workspace_users = []
     if g.user:
         workspace_users = WorkspaceUser.query.filter(
-            WorkspaceUser.user_id == g.user.id).all()
+            WorkspaceUser.user_id == g.user.id
+        ).all()
     return render_template("home.html", workspace_users=workspace_users)
 
 
@@ -167,74 +163,97 @@ def home():
 #     return render_template('users/index.html', users=users)
 
 
-@app.route('/users/<int:user_id>')
-def users_show(user_id):
-    """Show user profile."""
-    user = User.query.get_or_404(user_id)
-    return render_template('users/show.html', user=user)
-
 #####################################################################################
 # User API routes
 
-# Get All Users
 
-
-@app.route('/users', methods=["GET"])
+@app.route("/users", methods=["GET"])
 def get_users():
     """Get all users"""
     users = User.query.all()
-    return jsonify({'data': [
-        {"id": user.id,
-            "firstName": user.first_name,
-         "lastName": user.last_name,
-         "email": user.email,
-         "username": user.username,
-         "imageUrl": user.image_url,
-         "bio": user.bio
-         } for user in users]})
+    return jsonify(
+        {
+            "data": [
+                {
+                    "id": user.id,
+                    "firstName": user.first_name,
+                    "lastName": user.last_name,
+                    "email": user.email,
+                    "username": user.username,
+                    "imageUrl": user.image_url,
+                    "bio": user.bio,
+                }
+                for user in users
+            ]
+        }
+    )
 
 
-# Add a new user
-
-@app.route('/users', methods=["POST"])
+@app.route("/users", methods=["POST"])
 def add_user():
     """Add a user"""
-    form = UserAddForm(csrf_enabled=False, data=request.json)
-    if(form.validate()):
-        first_name = form.data['first_name']
-        last_name = form.data['last_name']
-        email = form.data['email']
-        password = bcrypt.generate_password_hash(
-            form.data['password']).decode('UTF-8')
+    form = UserAddUpdateForm(csrf_enabled=False, data=request.json)
+    try:
+        if form.validate():
+            first_name = form.data["first_name"]
+            last_name = form.data["last_name"]
+            email = form.data["email"]
+            username = form.data[
+                "first_name"
+            ]  # TODO: need to slugify and autoincrement if taken
+            password = bcrypt.generate_password_hash(form.data["password"]).decode(
+                "UTF-8"
+            )
 
-    user = User(name=name, workspace_name=workspace)
-    db.session.add(team)
-    db.session.commit()
-    return jsonify({'data': name})
-    return jsonify({'errors': form.errors}), 400
+            user = User(
+                first_name=first_name,
+                last_name=last_name,
+                email=email,
+                username=username,
+                password=password,
+            )
+            db.session.add(user)
+            db.session.commit()
+            return (jsonify(data=user.to_dict()), 201)
+
+        return jsonify({"errors": form.errors}), 400
+    except IntegrityError as e:
+        # TODO: need to add password too short error
+        return jsonify({"errors": "Email taken"}), 400
 
 
-# @app.route('/teams/<int:id>', subdomain='<workspace>', methods=["GET"])
-# def get_team(workspace, id):
-#     """Get a single team"""
-#     team = Team.query.filter(Team.workspace_name ==
-#                              workspace, Team.id == id).first()
-#     if(not team):
-#         return jsonify({'errors': 'team not found'}), 404
-#     return jsonify({'data': team.name})
+@app.route("/users/<int:id>", methods=["GET"])
+def get_user(id):
+    """Get a user"""
+    user = User.query.filter(User.id == id).first()
+    if not user:
+        return jsonify({"errors": "User not found"}), 404
+    return jsonify(data=user.to_dict())
 
 
-# @app.route('/teams/<int:id>', subdomain='<workspace>', methods=["PATCH"])
-# def update_team(workspace, id):
-#     """Update team name"""
-#     form = TeamAddUpdateForm(csrf_enabled=False, data=request.json)
-#     if(form.validate()):
-#         team = Team.query.filter(Team.workspace_name ==
-#                                  workspace, Team.id == id).first()
-#         team.name = form.data['name']
-#         db.session.commit()
-#         return jsonify({'data': team.name})
-#     return jsonify({'errors': form.errors}), 400
+# @app.route("/users/<int:id>", methods=["PATCH"])
+# def update_user(id):
+#     """Update user"""
+#     try:
+#         form = UserAddUpdateForm(csrf_enabled=False, data=request.json)
+#         if form.validate():
+#             user = User.query.filter(User.id == id).first()
+#             user.first_name = form.data["first_name"]
+#             user.last_name = form.data["last_name"]
+#             user.email = form.data["email"]
+#             user.image_url = form.data["image_url"]
+#             user.bio = form.data["bio"]
+#             user.password = bcrypt.generate_password_hash(form.data["password"]).decode(
+#                 "UTF-8"
+#             )
+
+#             db.session.commit()
+#             return jsonify({"data": user.to_dict()})
+#         else:
+#             return jsonify({"errors": "Missing fields"}), 400
+
+#     except IntegrityError as e:
+#         return jsonify({"errors": "Email taken"}), 400
 
 
 # @app.route('/teams/<int:id>', subdomain='<workspace>', methods=["DELETE"])
@@ -253,7 +272,8 @@ def add_user():
 ##############################################################################
 # Workspace routes:
 
-@app.route('/workspaces/add', methods=["GET", "POST"])
+
+@app.route("/workspaces/add", methods=["GET", "POST"])
 def add_workspace():
     """ Handle add workspace form
 
@@ -266,95 +286,97 @@ def add_workspace():
     # If the form has been submitted and is valid, add the new workspace to the DB
     if form.validate_on_submit():
         new_workspace = Workspace(
-            formatted_name=generate_workspace_formatted_name(form.data['readable_name']), readable_name=form.data['readable_name'])
+            formatted_name=generate_workspace_formatted_name(
+                form.data["readable_name"]
+            ),
+            readable_name=form.data["readable_name"],
+        )
         db.session.add(new_workspace)
         db.session.commit()
-        return redirect('/workspaces')
+        return redirect("/workspaces")
     # Otherwise show the new workspace form
     else:
         return render_template("workspaces/add-workspace.html", form=form)
 
 
-@app.route('/workspaces')
+@app.route("/workspaces")
 def list_workspaces():
     """Page with listing of workspaces.
 
     Can take a 'q' param in querystring to search by that workspace name.
     """
 
-    search = request.args.get('q')
+    search = request.args.get("q")
 
     if not search:
         workspaces = Workspace.query.all()
     else:
-        workspaces = Workspace.query.filter(
-            Workspace.name.like(f"%{search}%")).all()
+        workspaces = Workspace.query.filter(Workspace.name.like(f"%{search}%")).all()
 
-    return render_template('workspaces/index.html', workspaces=workspaces)
+    return render_template("workspaces/index.html", workspaces=workspaces)
 
 
 # @app.route('/<name>')
-@app.route('/', subdomain='<name>')
+@app.route("/", subdomain="<name>")
 def workspace_show(name):
     """Show workspace page."""
-    workspace = Workspace.query.filter(
-        Workspace.formatted_name == name).first()
-    return render_template('workspaces/show.html', workspace=workspace)
+    workspace = Workspace.query.filter(Workspace.formatted_name == name).first()
+    return render_template("workspaces/show.html", workspace=workspace)
 
 
 #####################################################################################
 # Team routes
-@app.route('/teams', subdomain='<workspace>', methods=["GET"])
+@app.route("/teams", subdomain="<workspace>", methods=["GET"])
 def get_teams(workspace):
     """Get all teams"""
     teams = Team.query.filter(Team.workspace_name == workspace).all()
-    return jsonify({'data': [team.name for team in teams]})
+    return jsonify({"data": [team.name for team in teams]})
 
 
-@app.route('/teams/<int:id>', subdomain='<workspace>', methods=["GET"])
+@app.route("/teams/<int:id>", subdomain="<workspace>", methods=["GET"])
 def get_team(workspace, id):
     """Get a single team"""
-    team = Team.query.filter(Team.workspace_name ==
-                             workspace, Team.id == id).first()
-    if(not team):
-        return jsonify({'errors': 'team not found'}), 404
-    return jsonify({'data': team.name})
+    team = Team.query.filter(Team.workspace_name == workspace, Team.id == id).first()
+    if not team:
+        return jsonify({"errors": "team not found"}), 404
+    return jsonify({"data": team.name})
 
 
-@app.route('/teams', subdomain='<workspace>', methods=["POST"])
+@app.route("/teams", subdomain="<workspace>", methods=["POST"])
 def add_team(workspace):
     """Add a team"""
     form = TeamAddUpdateForm(csrf_enabled=False, data=request.json)
-    if(form.validate()):
-        name = form.data['name']
+    if form.validate():
+        name = form.data["name"]
         team = Team(name=name, workspace_name=workspace)
         db.session.add(team)
         db.session.commit()
-        return jsonify({'data': name})
-    return jsonify({'errors': form.errors}), 400
+        return jsonify({"data": name})
+    return jsonify({"errors": form.errors}), 400
 
 
-@app.route('/teams/<int:id>', subdomain='<workspace>', methods=["PATCH"])
+@app.route("/teams/<int:id>", subdomain="<workspace>", methods=["PATCH"])
 def update_team(workspace, id):
     """Update team name"""
     form = TeamAddUpdateForm(csrf_enabled=False, data=request.json)
-    if(form.validate()):
-        team = Team.query.filter(Team.workspace_name ==
-                                 workspace, Team.id == id).first()
-        team.name = form.data['name']
+    if form.validate():
+        team = Team.query.filter(
+            Team.workspace_name == workspace, Team.id == id
+        ).first()
+        team.name = form.data["name"]
         db.session.commit()
-        return jsonify({'data': team.name})
-    return jsonify({'errors': form.errors}), 400
+        return jsonify({"data": team.name})
+    return jsonify({"errors": form.errors}), 400
 
 
-@app.route('/teams/<int:id>', subdomain='<workspace>', methods=["DELETE"])
+@app.route("/teams/<int:id>", subdomain="<workspace>", methods=["DELETE"])
 def delete_team(workspace, id):
     """Delete a team"""
-    team = Team.query.filter(Team.workspace_name ==
-                             workspace, Team.id == id).first()
-    if(not team):
-        return jsonify({'errors': 'team not found'}), 404
+    team = Team.query.filter(Team.workspace_name == workspace, Team.id == id).first()
+    if not team:
+        return jsonify({"errors": "team not found"}), 404
 
     db.session.delete(team)
     db.session.commit()
-    return jsonify({'data': 'team deleted'})
+    return jsonify({"data": "team deleted"})
+

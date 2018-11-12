@@ -8,48 +8,23 @@ db = SQLAlchemy()
 class User(db.Model):
     """User for bolt"""
 
-    __tablename__ = 'users'
+    __tablename__ = "users"
 
-    id = db.Column(
-        db.Integer,
-        primary_key=True,
-    )
+    id = db.Column(db.Integer, primary_key=True)
 
-    first_name = db.Column(
-        db.Text,
-        nullable=False
-    )
+    first_name = db.Column(db.Text, nullable=False)
 
-    last_name = db.Column(
-        db.Text,
-        nullable=False
-    )
+    last_name = db.Column(db.Text, nullable=False)
 
-    email = db.Column(
-        db.Text,
-        nullable=False,
-        unique=True
-    )
+    email = db.Column(db.Text, nullable=False, unique=True)
 
-    username = db.Column(
-        db.Text,
-        nullable=False,
-        unique=True
-    )
+    username = db.Column(db.Text, nullable=False, unique=True)
 
-    image_url = db.Column(
-        db.Text,
-        default="/static/images/default.jpg",
-    )
+    image_url = db.Column(db.Text, default="/static/images/default.jpg")
 
-    bio = db.Column(
-        db.Text,
-    )
+    bio = db.Column(db.Text)
 
-    password = db.Column(
-        db.Text,
-        nullable=False,
-    )
+    password = db.Column(db.Text, nullable=False)
 
     @classmethod
     def signup(cls, first_name, last_name, email, username, password):
@@ -58,14 +33,14 @@ class User(db.Model):
         Hashes password and adds user to system.
         """
 
-        hashed_pwd = bcrypt.generate_password_hash(password).decode('UTF-8')
+        hashed_pwd = bcrypt.generate_password_hash(password).decode("UTF-8")
 
         user = User(
             first_name=first_name,
             last_name=last_name,
             email=email,
             username=username,
-            password=hashed_pwd
+            password=hashed_pwd,
         )
 
         db.session.add(user)
@@ -91,28 +66,34 @@ class User(db.Model):
 
         return False
 
+    def to_dict(self):
+        """Serialize user to a dict of user info. does not return pw"""
+
+        return {
+            "id": self.id,
+            "first_name": self.first_name,
+            "last_name": self.last_name,
+            "email": self.email,
+            "username": self.username,
+            "image_url": self.image_url,
+            "bio": self.bio,
+        }
+
 
 class Workspace(db.Model):
     """Workspace model for bolt"""
 
-    __tablename__ = 'workspaces'
+    __tablename__ = "workspaces"
 
-    formatted_name = db.Column(
-        db.Text,
-        primary_key=True
-    )
+    formatted_name = db.Column(db.Text, primary_key=True)
 
-    readable_name = db.Column(
-        db.Text,
-        nullable=False,
-        unique=True
-    )
+    readable_name = db.Column(db.Text, nullable=False, unique=True)
 
 
 class Team(db.Model):
     """Team model for bolt"""
 
-    __tablename__ = 'teams'
+    __tablename__ = "teams"
 
     id = db.Column(db.Integer, autoincrement=True, primary_key=True)
 
@@ -120,67 +101,57 @@ class Team(db.Model):
 
     workspace_name = db.Column(
         db.Text,
-        db.ForeignKey('workspaces.formatted_name', ondelete="cascade"),
-        nullable=False
+        db.ForeignKey("workspaces.formatted_name", ondelete="cascade"),
+        nullable=False,
     )
 
 
 class WorkspaceUser(db.Model):
     """Many to many between workspaces and users"""
 
-    __tablename__ = 'workspaces_users'
+    __tablename__ = "workspaces_users"
 
     workspace_formatted_name = db.Column(
         db.Text,
-        db.ForeignKey('workspaces.formatted_name', ondelete="cascade"),
-        primary_key=True
+        db.ForeignKey("workspaces.formatted_name", ondelete="cascade"),
+        primary_key=True,
     )
 
     user_id = db.Column(
-        db.Integer,
-        db.ForeignKey('users.id', ondelete="cascade"),
-        primary_key=True
+        db.Integer, db.ForeignKey("users.id", ondelete="cascade"), primary_key=True
     )
 
 
 class Segment(db.Model):
     """A team can have many segment, such as design, engineering, and pm"""
 
-    __tablename__ = 'segments'
+    __tablename__ = "segments"
 
     id = db.Column(db.Integer, autoincrement=True, primary_key=True)
 
     team_id = db.Column(
-        db.Integer,
-        db.ForeignKey('teams.id', ondelete="cascade"), nullable=False
+        db.Integer, db.ForeignKey("teams.id", ondelete="cascade"), nullable=False
     )
 
     name = db.Column(db.Text, nullable=False)
 
     lead = db.Column(
-        db.Integer,
-        db.ForeignKey('users.id', ondelete="cascade"), nullable=False
+        db.Integer, db.ForeignKey("users.id", ondelete="cascade"), nullable=False
     )
 
 
 class Member(db.Model):
     """A person can be a member of a segment, like Design on the spotify playlist team """
 
-    __tablename__ = 'members'
+    __tablename__ = "members"
 
     id = db.Column(db.Integer, autoincrement=True, primary_key=True)
 
     role = db.Column(db.Text, nullable=False)
 
-    user_id = db.Column(
-        db.Integer,
-        db.ForeignKey('users.id', ondelete="cascade")
-    )
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="cascade"))
 
-    segment_id = db.Column(
-        db.Integer,
-        db.ForeignKey('segments.id', ondelete="cascade")
-    )
+    segment_id = db.Column(db.Integer, db.ForeignKey("segments.id", ondelete="cascade"))
 
 
 def connect_db(app):
