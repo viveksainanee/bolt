@@ -40,7 +40,6 @@ class User(db.Model):
             password=hashed_pwd,
         )
 
-        db.session.add(user)
         return user
 
     # @classmethod

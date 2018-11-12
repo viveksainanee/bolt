@@ -60,11 +60,9 @@ def add_user():
             first_name = form.data["first_name"]
             last_name = form.data["last_name"]
             email = form.data["email"]
-            password = bcrypt.generate_password_hash(form.data["password"]).decode(
-                "UTF-8"
-            )
-
-            user = User(
+            password = form.data["password"]
+            
+            user = User.signup(
                 first_name=first_name,
                 last_name=last_name,
                 email=email,
@@ -76,7 +74,6 @@ def add_user():
 
         return jsonify({"errors": form.errors}), 400
     except IntegrityError as e:
-        # TODO: need to add password too short error
         return jsonify({"errors": "Email taken"}), 400
 
 
@@ -101,13 +98,11 @@ def update_user(id):
             user.first_name = form.data["first_name"]
             user.last_name = form.data["last_name"]
             user.email = form.data["email"]
-            # user.image_url = form.data["image_url"] or user.image_url
-            # user.bio = form.data["bio"] or user.bio
-
-            #TODO: this should ask for current password instead of resetting
-            user.password = bcrypt.generate_password_hash(form.data["password"]).decode(
-                "UTF-8"
-            )
+            if "image_url" in form.data:
+                user.image_url = form.data["image_url"]
+            
+            if "bio" in form.data:
+                user.bio = form.data["bio"]
 
             db.session.commit()
             return jsonify({"data": user.to_dict()})
@@ -118,17 +113,16 @@ def update_user(id):
         return jsonify({"errors": "Email taken"}), 400
 
 
-# @app.route('/teams/<int:id>', subdomain='<workspace>', methods=["DELETE"])
-# def delete_team(workspace, id):
-#     """Delete a team"""
-#     team = Team.query.filter(Team.workspace_name ==
-#                              workspace, Team.id == id).first()
-#     if(not team):
-#         return jsonify({'errors': 'team not found'}), 404
+@app.route('/users/<int:id>', methods=["DELETE"])
+def delete_user(id):
+    """Delete a user"""
+    user = User.query.filter(User.id == id).first()
+    if(not user):
+        return jsonify({'errors': 'User not found'}), 404
 
-#     db.session.delete(team)
-#     db.session.commit()
-#     return jsonify({'data': 'team deleted'})
+    db.session.delete(user)
+    db.session.commit()
+    return jsonify({'data': 'User deleted'})
 
 
 
@@ -160,7 +154,7 @@ def add_team(workspace):
         team = Team(name=name, workspace_name=workspace)
         db.session.add(team)
         db.session.commit()
-        return jsonify({"data": name})
+        return jsonify({"data": name}), 201
     return jsonify({"errors": form.errors}), 400
 
 
