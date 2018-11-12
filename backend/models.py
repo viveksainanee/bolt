@@ -18,8 +18,6 @@ class User(db.Model):
 
     email = db.Column(db.Text, nullable=False, unique=True)
 
-    username = db.Column(db.Text, nullable=False, unique=True)
-
     image_url = db.Column(db.Text, default="/static/images/default.jpg")
 
     bio = db.Column(db.Text)
@@ -27,7 +25,7 @@ class User(db.Model):
     password = db.Column(db.Text, nullable=False)
 
     @classmethod
-    def signup(cls, first_name, last_name, email, username, password):
+    def signup(cls, first_name, last_name, email, password):
         """Signs up user.
 
         Hashes password and adds user to system.
@@ -39,32 +37,31 @@ class User(db.Model):
             first_name=first_name,
             last_name=last_name,
             email=email,
-            username=username,
             password=hashed_pwd,
         )
 
         db.session.add(user)
         return user
 
-    @classmethod
-    def authenticate(cls, username, password):
-        """Find user with `username` and `password`.
+    # @classmethod
+    # def authenticate(cls, username, password):
+    #     """Find user with `username` and `password`.
 
-        This is a class method (call it on the class, not an individual user.)
-        It searches for a user whose password hash matches this password
-        and, if it finds such a user, returns that user object.
+    #     This is a class method (call it on the class, not an individual user.)
+    #     It searches for a user whose password hash matches this password
+    #     and, if it finds such a user, returns that user object.
 
-        If can't find matching user (or if password is wrong), returns False.
-        """
+    #     If can't find matching user (or if password is wrong), returns False.
+    #     """
 
-        user = cls.query.filter_by(username=username).first()
+    #     user = cls.query.filter_by(username=username).first()
 
-        if user:
-            is_auth = bcrypt.check_password_hash(user.password, password)
-            if is_auth:
-                return user
+    #     if user:
+    #         is_auth = bcrypt.check_password_hash(user.password, password)
+    #         if is_auth:
+    #             return user
 
-        return False
+    #     return False
 
     def to_dict(self):
         """Serialize user to a dict of user info. does not return pw"""
@@ -74,7 +71,6 @@ class User(db.Model):
             "first_name": self.first_name,
             "last_name": self.last_name,
             "email": self.email,
-            "username": self.username,
             "image_url": self.image_url,
             "bio": self.bio,
         }
