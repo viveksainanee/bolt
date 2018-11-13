@@ -126,6 +126,76 @@ def delete_user(id):
 
 
 
+# ##############################################################################
+# # Workspace routes:
+
+@app.route("/workspaces")
+def list_workspaces():
+    """API to list all workspaces
+
+    Can take a 'q' param in querystring to search by that workspace name.
+    """
+
+    search = request.args.get("q")
+
+    if not search:
+        workspaces = Workspace.query.all()
+    else:
+        #TODO: make this work for case insensitive searches
+        workspaces = Workspace.query.filter(Workspace.readable_name.like(f"%{search}%")).all()
+
+    return jsonify(
+        {
+            "data": [
+                {
+                    "formatted_name": workspace.formatted_name,
+                    "readable_name": workspace.readable_name
+                }
+                for workspace in workspaces
+            ]
+        }
+    )
+
+
+
+# @app.route("/workspaces/add", methods=["GET", "POST"])
+# def add_workspace():
+#     """ Handle add workspace form
+
+#     - if form not filled out or invalid: show form
+#     - if valid: add playlist to SQLA and redirect to worksplaces list
+#     """
+
+#     form = WorkspaceAddForm()
+
+#     # If the form has been submitted and is valid, add the new workspace to the DB
+#     if form.validate_on_submit():
+#         new_workspace = Workspace(
+#             formatted_name=generate_workspace_formatted_name(
+#                 form.data["readable_name"]
+#             ),
+#             readable_name=form.data["readable_name"],
+#         )
+#         db.session.add(new_workspace)
+#         db.session.commit()
+#         return redirect("/workspaces")
+#     # Otherwise show the new workspace form
+#     else:
+#         return render_template("workspaces/add-workspace.html", form=form)
+
+
+
+
+# # @app.route('/<name>')
+# @app.route("/", subdomain="<name>")
+# def workspace_show(name):
+#     """Show workspace page."""
+#     workspace = Workspace.query.filter(Workspace.formatted_name == name).first()
+#     return render_template("workspaces/show.html", workspace=workspace)
+
+
+
+
 #####################################################################################
 # Team API routes
 
@@ -185,59 +255,6 @@ def delete_team(workspace, id):
 
 
 
-# ##############################################################################
-# # Workspace routes:
-
-
-# @app.route("/workspaces/add", methods=["GET", "POST"])
-# def add_workspace():
-#     """ Handle add workspace form
-
-#     - if form not filled out or invalid: show form
-#     - if valid: add playlist to SQLA and redirect to worksplaces list
-#     """
-
-#     form = WorkspaceAddForm()
-
-#     # If the form has been submitted and is valid, add the new workspace to the DB
-#     if form.validate_on_submit():
-#         new_workspace = Workspace(
-#             formatted_name=generate_workspace_formatted_name(
-#                 form.data["readable_name"]
-#             ),
-#             readable_name=form.data["readable_name"],
-#         )
-#         db.session.add(new_workspace)
-#         db.session.commit()
-#         return redirect("/workspaces")
-#     # Otherwise show the new workspace form
-#     else:
-#         return render_template("workspaces/add-workspace.html", form=form)
-
-
-# @app.route("/workspaces")
-# def list_workspaces():
-#     """Page with listing of workspaces.
-
-#     Can take a 'q' param in querystring to search by that workspace name.
-#     """
-
-#     search = request.args.get("q")
-
-#     if not search:
-#         workspaces = Workspace.query.all()
-#     else:
-#         workspaces = Workspace.query.filter(Workspace.name.like(f"%{search}%")).all()
-
-#     return render_template("workspaces/index.html", workspaces=workspaces)
-
-
-# # @app.route('/<name>')
-# @app.route("/", subdomain="<name>")
-# def workspace_show(name):
-#     """Show workspace page."""
-#     workspace = Workspace.query.filter(Workspace.formatted_name == name).first()
-#     return render_template("workspaces/show.html", workspace=workspace)
 
 
 # from flask_debugtoolbar import DebugToolbarExtension
