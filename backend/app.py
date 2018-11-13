@@ -3,6 +3,7 @@ import os
 from flask import Flask, render_template, request, flash, redirect, session, g, jsonify
 from sqlalchemy.exc import IntegrityError
 from flask_bcrypt import Bcrypt
+from slugify import slugify
 
 bcrypt = Bcrypt()
 
@@ -158,30 +159,27 @@ def list_workspaces():
 
 
 
-# @app.route("/workspaces/add", methods=["GET", "POST"])
-# def add_workspace():
-#     """ Handle add workspace form
+@app.route("/workspaces", methods=["POST"])
+def add_workspace():
+    """ Handle add workspace API  """
+    try: 
+        form = WorkspaceAddForm(csrf_enabled=False, data=request.json)
 
-#     - if form not filled out or invalid: show form
-#     - if valid: add playlist to SQLA and redirect to worksplaces list
-#     """
-
-#     form = WorkspaceAddForm()
-
-#     # If the form has been submitted and is valid, add the new workspace to the DB
-#     if form.validate_on_submit():
-#         new_workspace = Workspace(
-#             formatted_name=generate_workspace_formatted_name(
-#                 form.data["readable_name"]
-#             ),
-#             readable_name=form.data["readable_name"],
-#         )
-#         db.session.add(new_workspace)
-#         db.session.commit()
-#         return redirect("/workspaces")
-#     # Otherwise show the new workspace form
-#     else:
-#         return render_template("workspaces/add-workspace.html", form=form)
+        # If the form has been submitted and is valid, add the new workspace to the DB
+        if form.validate_on_submit():
+            new_workspace = Workspace(
+                formatted_name=slugify(
+                    form.data["readable_name"]
+                ),
+                readable_name=form.data["readable_name"],
+            )
+            db.session.add(new_workspace)
+            db.session.commit()
+            return (jsonify(data=new_workspace.to_dict()), 201)
+        else:
+            return jsonify({"errors": form.errors}), 400
+    except IntegrityError as e:
+        return jsonify({"errors": "Workspace name taken"}), 400
 
 
 

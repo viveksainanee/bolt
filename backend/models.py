@@ -84,6 +84,13 @@ class Workspace(db.Model):
 
     readable_name = db.Column(db.Text, nullable=False, unique=True)
 
+    def to_dict(self):
+        """Serialize workspace to a dict of workspace info"""
+        return {
+            "readable_name": self.readable_name,
+            "formatted_name": self.formatted_name
+        }
+
 
 class Team(db.Model):
     """Team model for bolt"""

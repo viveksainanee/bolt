@@ -25,7 +25,7 @@ u2 = User(first_name="Jamie", last_name="Lannister",
 
 
 # Add workspaces
-w1 = Workspace(formatted_name="my.first.workspace",
+w1 = Workspace(formatted_name="my-first-workspace",
                readable_name="My First Workspace")
 w2 = Workspace(formatted_name="spotify", readable_name="Spotify")
 
