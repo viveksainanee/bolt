@@ -182,14 +182,54 @@ def add_workspace():
         return jsonify({"errors": "Workspace name taken"}), 400
 
 
+@app.route("/", subdomain="<workspace>", methods=["GET"])
+def get_workspace(workspace):
+    """Get a workspace"""
+    workspace = Workspace.query.filter(Workspace.formatted_name == workspace).first()
+    if not workspace:
+        return jsonify({"errors": "Workspace not found"}), 404
+    return jsonify(data=workspace.to_dict())
 
 
-# # @app.route('/<name>')
-# @app.route("/", subdomain="<name>")
-# def workspace_show(name):
-#     """Show workspace page."""
-#     workspace = Workspace.query.filter(Workspace.formatted_name == name).first()
-#     return render_template("workspaces/show.html", workspace=workspace)
+# @app.route("/", subdomain="<workspace>", methods=["PATCH"])
+# def update_user(id):
+#     """Update user"""
+#     try:
+#         form = UserAddUpdateForm(csrf_enabled=False, data=request.json)
+#         if form.validate():
+#             user = User.query.filter(User.id == id).first()
+
+
+#             user.first_name = form.data["first_name"]
+#             user.last_name = form.data["last_name"]
+#             user.email = form.data["email"]
+#             if "image_url" in form.data:
+#                 user.image_url = form.data["image_url"]
+            
+#             if "bio" in form.data:
+#                 user.bio = form.data["bio"]
+
+#             db.session.commit()
+#             return jsonify({"data": user.to_dict()})
+#         else:
+#             return jsonify({"errors": "Missing fields"}), 400
+
+#     except IntegrityError as e:
+#         return jsonify({"errors": "Email taken"}), 400
+
+
+# @app.route('/users/<int:id>', methods=["DELETE"])
+# def delete_user(id):
+#     """Delete a user"""
+#     user = User.query.filter(User.id == id).first()
+#     if(not user):
+#         return jsonify({'errors': 'User not found'}), 404
+
+#     db.session.delete(user)
+#     db.session.commit()
+#     return jsonify({'data': 'User deleted'})
+
+
 
 
 

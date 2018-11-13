@@ -41,11 +41,11 @@ db.session.commit()
 
 # Add teams
 t1 = Team(name="playlist", workspace_name="spotify")
-t2 = Team(name="formatting", workspace_name="my.first.workspace")
+t2 = Team(name="formatting", workspace_name="my-first-workspace")
 
 
 # Add Jon to My First Workspace
-wu1 = WorkspaceUser(workspace_formatted_name="my.first.workspace",
+wu1 = WorkspaceUser(workspace_formatted_name="my-first-workspace",
                     user_id=u1.id)
 
 wu2 = WorkspaceUser(workspace_formatted_name="spotify",
