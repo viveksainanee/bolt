@@ -1,0 +1,19 @@
+.Home-cont {
+  position: relative;
+  border: 5px solid red;
+  color: rgb(191, 136, 216);
+  height: 100vh;
+}
+
+.Home-brand-cont {
+  position: absolute;
+  top: 40%;
+  left: 0;
+  right: 0;
+}
+
+.Home-logo {
+  font-size: 50px;
+  margin-bottom: 25px;
+  color: rgb(237, 249, 247);
+}

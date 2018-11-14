@@ -1,0 +1,17 @@
+.NavBar {
+  display: flex;
+  flex-direction: inline-block;
+  justify-content: space-between;
+  align-items: center;
+  padding-left: 25px;
+  padding-right: 25px;
+  height: 40px;
+}
+
+.NavBar-login {
+  margin-right: 50px;
+}
+
+.NavBar-logo {
+  color: rgb(237, 249, 247);
+}

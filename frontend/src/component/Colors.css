@@ -1,0 +1,12 @@
+.Colors-cont {
+  display: inline-block;
+  margin: 0 auto;
+  color: rgb(206, 38, 38);
+  font-weight: bold;
+  border: 3px dotted red;
+}
+
+.Colors-swatch {
+  height: 50px;
+  width: 200px;
+}

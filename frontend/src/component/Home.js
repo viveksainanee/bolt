@@ -1,12 +1,16 @@
 import React, { Component } from 'react';
 import NavBar from './NavBar';
+import './Home.css';
 
 class Home extends Component {
   render() {
     return (
-      <div>
+      <div className="Home-cont">
         <NavBar />
-        I'm the home page
+        <div className="Home-brand-cont">
+          <div className="Home-logo">bolt</div>
+          <div className="Home-slogan">Software planning for today</div>
+        </div>
       </div>
     );
   }
