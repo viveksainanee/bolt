@@ -8,7 +8,7 @@ from slugify import slugify
 bcrypt = Bcrypt()
 
 
-from forms import UserAddUpdateForm, WorkspaceAddForm, LoginForm, TeamAddUpdateForm
+from forms import UserAddForm, UserUpdateForm, WorkspaceAddForm, LoginForm, TeamAddUpdateForm
 from models import db, connect_db, User, Workspace, WorkspaceUser, Team
 
 
@@ -55,7 +55,7 @@ def get_users():
 @app.route("/users", methods=["POST"])
 def add_user():
     """Add a user"""
-    form = UserAddUpdateForm(csrf_enabled=False, data=request.json)
+    form = UserAddForm(csrf_enabled=False, data=request.json)
     try:
         if form.validate():
             first_name = form.data["first_name"]
@@ -91,7 +91,7 @@ def get_user(id):
 def update_user(id):
     """Update user"""
     try:
-        form = UserAddUpdateForm(csrf_enabled=False, data=request.json)
+        form = UserUpdateForm(csrf_enabled=False, data=request.json)
         if form.validate():
             user = User.query.filter(User.id == id).first()
 
