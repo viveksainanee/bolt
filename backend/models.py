@@ -108,7 +108,7 @@ class Team(db.Model):
     )
 
     # Relationship to tasks
-    # tasks = db.relationship('Task', backref='team')
+    tasks = db.relationship('Task')
 
 
 class Task(db.Model):

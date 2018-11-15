@@ -8,8 +8,8 @@ from slugify import slugify
 bcrypt = Bcrypt()
 
 
-from forms import UserAddUpdateForm, WorkspaceAddForm, LoginForm, TeamAddUpdateForm
-from models import db, connect_db, User, Workspace, WorkspaceUser, Team
+from forms import UserAddUpdateForm, WorkspaceAddForm, LoginForm, TeamAddUpdateForm, TaskAddForm, TaskUpdateForm
+from models import db, connect_db, User, Workspace, WorkspaceUser, Team, Task
 
 # Import helper functions
 from helpers import conv_obj_to_dict, update_obj_with_data
@@ -295,64 +295,69 @@ def delete_team(workspace, id):
 #####################################################################################
 # Task API routes
 
-# @app.route("/teams/<int:id>/tasks", subdomain="<workspace>", methods=["GET"])
-# def get_tasks(workspace, id):
-#     """Get all tasks for a team"""
-#     team = Team.query.filter(Team.workspace_name ==
-#                              workspace, Team.id == id).first()
-#     tasks = team.tasks
-#     data = [conv_obj_to_dict(task) for task in tasks]
-#     return jsonify({"data": data})
+@app.route("/teams/<int:id>/tasks", subdomain="<workspace>", methods=["GET"])
+def get_tasks(workspace, id):
+    """Get all tasks for a team"""
+    team = Team.query.filter(Team.workspace_name ==
+                             workspace, Team.id == id).first()
+    tasks = team.tasks
+    data = [conv_obj_to_dict(task) for task in tasks]
+    return jsonify({"data": data})
 
 
-# @app.route("/teams/<int:id>/tasks/<int:task_id>", subdomain="<workspace>", methods=["GET"])
-# def get_team(workspace, id, task_id):
-#     """Get a single task"""
-#     team = Team.query.filter(Team.workspace_name ==
-#                              workspace, Team.id == id).first()
-#     if not team:
-#         return jsonify({"errors": "team not found"}), 404
-#     return jsonify({"data": team.name})
+@app.route("/teams/<int:id>/tasks/<int:task_id>", subdomain="<workspace>", methods=["GET"])
+def get_task(workspace, id, task_id):
+    """Get a single task"""
+    task = Task.query.filter(Task.team == id, Task.id == task_id).first()
+    if not task:
+        return jsonify({"errors": "task not found"}), 404
+    return jsonify({"data": conv_obj_to_dict(task)})
 
 
-# @app.route("/teams", subdomain="<workspace>", methods=["POST"])
-# def add_team(workspace):
-#     """Add a team"""
-#     form = TeamAddUpdateForm(csrf_enabled=False, data=request.json)
-#     if form.validate():
-#         name = form.data["name"]
-#         team = Team(name=name, workspace_name=workspace)
-#         db.session.add(team)
-#         db.session.commit()
-#         return jsonify({"data": name}), 201
-#     return jsonify({"errors": form.errors}), 400
+@app.route("/teams/<int:id>/tasks", subdomain="<workspace>", methods=["POST"])
+def add_task(workspace, id):
+    """Add a task"""
+    form = TaskAddForm(csrf_enabled=False, data=request.json)
+    if form.validate():
+        creator_id = form.data.get('creator_id', None)
+        assignee_id = form.data.get('assignee_id', None)
+        title = form.data.get('title', None) 
+        description = form.data.get('description', None) 
+        priority = form.data.get('priority', None) 
+        status = form.data.get('status', None) 
+        queue = form.data.get('queue', None) 
+        team = form.data.get('team', None) 
+
+        task = Task(creator_id=creator_id,assignee_id=assignee_id,title=title,description=description,priority=priority,status=status,queue=queue,team=team)
+        ret_task = conv_obj_to_dict(task)
+        db.session.add(task)
+        db.session.commit()
+        return jsonify({"data": ret_task}), 201
+    return jsonify({"errors": form.errors}), 400
 
 
-# @app.route("/teams/<int:id>", subdomain="<workspace>", methods=["PATCH"])
-# def update_team(workspace, id):
-#     """Update team name"""
-#     form = TeamAddUpdateForm(csrf_enabled=False, data=request.json)
-#     if form.validate():
-#         team = Team.query.filter(
-#             Team.workspace_name == workspace, Team.id == id
-#         ).first()
-#         team.name = form.data["name"]
-#         db.session.commit()
-#         return jsonify({"data": team.name})
-#     return jsonify({"errors": form.errors}), 400
+@app.route("/teams/<int:id>/tasks/<int:task_id>", subdomain="<workspace>", methods=["PATCH"])
+def update_task(workspace, id, task_id):
+    """Update task"""
+    form = TaskUpdateForm(csrf_enabled=False, data=request.json)
+    if form.validate():
+        task = Task.query.filter(Task.team == id, Task.id == task_id).first()
+        update_obj_with_data(task, form.data)
+        ret_task = conv_obj_to_dict(task)
+        db.session.commit()
+        return jsonify({"data": ret_task})
+    return jsonify({"errors": form.errors}), 400
 
 
-# @app.route("/teams/<int:id>", subdomain="<workspace>", methods=["DELETE"])
-# def delete_team(workspace, id):
-#     """Delete a team"""
-#     team = Team.query.filter(Team.workspace_name ==
-#                              workspace, Team.id == id).first()
-#     if not team:
-#         return jsonify({"errors": "team not found"}), 404
-
-#     db.session.delete(team)
-#     db.session.commit()
-#     return jsonify({"data": "team deleted"})
+@app.route("/teams/<int:id>/tasks/<int:task_id>", subdomain="<workspace>", methods=["DELETE"])
+def delete_task(workspace, id, task_id):
+    """Delete a task"""
+    task = Task.query.filter(Task.team == id, Task.id == task_id).first()
+    if not task:
+        return jsonify({"errors": "task not found"}), 404
+    db.session.delete(task)
+    db.session.commit()
+    return jsonify({"data": "task deleted"})
 
 
 # from flask_debugtoolbar import DebugToolbarExtension
