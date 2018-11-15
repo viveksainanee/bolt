@@ -107,6 +107,36 @@ class Team(db.Model):
         nullable=False,
     )
 
+    # Relationship to tasks
+    tasks = db.relationship('Task')
+
+
+class Task(db.Model):
+    """Task model for bolt"""
+
+    __tablename__ = "tasks"
+
+    id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+
+    creator_id = db.Column(db.Integer, db.ForeignKey(
+        "users.id", ondelete="cascade"), nullable=False)
+
+    assignee_id = db.Column(db.Integer, db.ForeignKey(
+        "users.id", ondelete="cascade"))
+
+    title = db.Column(db.Text, nullable=False)
+
+    description = db.Column(db.Text)
+
+    priority = db.Column(db.Text)
+
+    status = db.Column(db.Text, nullable=False)
+
+    queue = db.Column(db.Integer)
+
+    team = db.Column(db.Integer, db.ForeignKey(
+        "teams.id", ondelete="cascade"), nullable=False)
+
 
 class WorkspaceUser(db.Model):
     """Many to many between workspaces and users"""
@@ -151,9 +181,11 @@ class Member(db.Model):
 
     role = db.Column(db.Text, nullable=False)
 
-    user_id = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="cascade"))
+    user_id = db.Column(db.Integer, db.ForeignKey(
+        "users.id", ondelete="cascade"))
 
-    segment_id = db.Column(db.Integer, db.ForeignKey("segments.id", ondelete="cascade"))
+    segment_id = db.Column(db.Integer, db.ForeignKey(
+        "segments.id", ondelete="cascade"))
 
 
 def connect_db(app):
