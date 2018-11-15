@@ -108,7 +108,7 @@ class Team(db.Model):
     )
 
     # Relationship to tasks
-    tasks = db.relationship('Task', backref='team')
+    # tasks = db.relationship('Task', backref='team')
 
 
 class Task(db.Model):
@@ -118,7 +118,8 @@ class Task(db.Model):
 
     id = db.Column(db.Integer, autoincrement=True, primary_key=True)
 
-    creator_id = db.Column(db.Integer, nullable=False, db.ForeignKey("users.id", ondelete="cascade"))
+    creator_id = db.Column(db.Integer, db.ForeignKey(
+        "users.id", ondelete="cascade"), nullable=False)
 
     assignee_id = db.Column(db.Integer, db.ForeignKey(
         "users.id", ondelete="cascade"))
@@ -133,7 +134,8 @@ class Task(db.Model):
 
     queue = db.Column(db.Integer)
 
-    team = db.Column(db.Integer, nullable=False, db.ForeignKey("teams.id", ondelete="cascade"))
+    team = db.Column(db.Integer, db.ForeignKey(
+        "teams.id", ondelete="cascade"), nullable=False)
 
 
 class WorkspaceUser(db.Model):
