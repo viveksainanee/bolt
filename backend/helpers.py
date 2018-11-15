@@ -26,7 +26,7 @@ def update_obj_with_data(obj, data):
     """Will update an object's attributes with the data specified"""
     for key in data:
         if data[key] != '':
-            obj[key] = data[key]
+            setattr(obj, key, data[key])
 
 
 def is_jsonable(data):
