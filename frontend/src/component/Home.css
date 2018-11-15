@@ -1,19 +1,32 @@
 .Home-cont {
   position: relative;
-  border: 5px solid red;
   color: rgb(191, 136, 216);
   height: 100vh;
 }
 
 .Home-brand-cont {
+  display: block;
+  height: 90%;
+}
+
+.Home-brand {
   position: absolute;
-  top: 40%;
+  top: 30%;
   left: 0;
   right: 0;
 }
 
 .Home-logo {
+  font-family: 'Orbitron', sans-serif;
   font-size: 50px;
-  margin-bottom: 25px;
-  color: rgb(237, 249, 247);
+  margin-bottom: 10px;
+  color: rgb(240, 214, 79);
+}
+
+.Home-slogan {
+  font-size: 20px;
+}
+
+.Home-signUp-button {
+  margin-top: 20px;
 }

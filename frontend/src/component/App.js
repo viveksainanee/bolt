@@ -1,16 +1,14 @@
 import React, { Component } from 'react';
-import './App.css';
-import Home from './Home';
+import Routes from './Routes';
 import Colors from './Colors';
-import Footer from './Footer';
+import './App.css';
 
 class App extends Component {
   render() {
     return (
       <div className="App">
-        <Home />
-        <Colors />
-        <Footer />
+        <Routes />
+        {/* <Colors /> */}
       </div>
     );
   }

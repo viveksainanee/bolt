@@ -1,11 +1,14 @@
 import React, { Component } from 'react';
 import { Switch, Route } from 'react-router-dom';
 import Home from './Home';
-import NavBar from './NavBar';
+import Login from './Login';
+import GetStarted from './GetStarted';
+import SignUp from './SignUp';
+// import Colors from './Colors';
+// import NavBar from './NavBar';
 // import Companies from './Companies';
 // import Company from './Company';
 // import Jobs from './Jobs';
-// import Login from './Login';
 // import Profile from './Profile';
 // import JoblyApi from './JoblyApi';
 // import ErrorHandler from './ErrorHandler';
@@ -25,6 +28,10 @@ class Routes extends Component {
       <div>
         <Switch>
           <Route exact path="/" render={() => <Home />} />
+          <Route exact path="/login" render={() => <Login />} />
+          <Route exact path="/getstarted" render={() => <GetStarted />} />
+          <Route exact path="/signup" render={() => <SignUp />} />
+
           {/* <Route exact path="/companies" render={() => <Companies />} />
           <Route
             exact
