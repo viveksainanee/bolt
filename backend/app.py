@@ -8,7 +8,7 @@ from slugify import slugify
 bcrypt = Bcrypt()
 
 
-from forms import UserAddForm, UserUpdateForm, WorkspaceAddForm, LoginForm, TeamAddUpdateForm
+from forms import UserAddForm, UserUpdateForm, WorkspaceAddUpdateForm, LoginForm, TeamAddUpdateForm
 from models import db, connect_db, User, Workspace, WorkspaceUser, Team
 
 
@@ -95,7 +95,7 @@ def update_user(id):
         if form.validate():
             user = User.query.filter(User.id == id).first()
 
-
+            #TODO: Make a helper function for partial update
             user.first_name = form.data["first_name"]
             user.last_name = form.data["last_name"]
             user.email = form.data["email"]
@@ -163,7 +163,7 @@ def list_workspaces():
 def add_workspace():
     """ Handle add workspace API  """
     try: 
-        form = WorkspaceAddForm(csrf_enabled=False, data=request.json)
+        form = WorkspaceAddUpdateForm(csrf_enabled=False, data=request.json)
 
         # If the form has been submitted and is valid, add the new workspace to the DB
         if form.validate_on_submit():
@@ -192,12 +192,12 @@ def get_workspace(workspace):
 
 
 # @app.route("/", subdomain="<workspace>", methods=["PATCH"])
-# def update_user(id):
-#     """Update user"""
+# def update_workspace(workspace):
+#     """Update workspace"""
 #     try:
-#         form = UserAddUpdateForm(csrf_enabled=False, data=request.json)
+#         form = WorkspaceAddUpdateForm(csrf_enabled=False, data=request.json)
 #         if form.validate():
-#             user = User.query.filter(User.id == id).first()
+#             workspace = Workspace.query.filter(Workspace.formmated_name == workspace).first()
 
 
 #             user.first_name = form.data["first_name"]

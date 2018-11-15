@@ -26,7 +26,7 @@ class LoginForm(FlaskForm):
     password = PasswordField("Password", validators=[Length(min=6)])
 
 
-class WorkspaceAddForm(FlaskForm):
+class WorkspaceAddUpdateForm(FlaskForm):
     """Form for adding workspaces."""
 
     readable_name = StringField("Readable Name", validators=[DataRequired()])
