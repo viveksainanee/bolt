@@ -11,6 +11,9 @@ bcrypt = Bcrypt()
 from forms import UserAddUpdateForm, WorkspaceAddForm, LoginForm, TeamAddUpdateForm
 from models import db, connect_db, User, Workspace, WorkspaceUser, Team
 
+# Import helper functions
+from helpers import conv_obj_to_dict, update_obj_with_data
+
 
 app = Flask(__name__)
 
@@ -62,7 +65,7 @@ def add_user():
             last_name = form.data["last_name"]
             email = form.data["email"]
             password = form.data["password"]
-            
+
             user = User.signup(
                 first_name=first_name,
                 last_name=last_name,
@@ -95,13 +98,12 @@ def update_user(id):
         if form.validate():
             user = User.query.filter(User.id == id).first()
 
-
             user.first_name = form.data["first_name"]
             user.last_name = form.data["last_name"]
             user.email = form.data["email"]
             if "image_url" in form.data:
                 user.image_url = form.data["image_url"]
-            
+
             if "bio" in form.data:
                 user.bio = form.data["bio"]
 
@@ -126,7 +128,6 @@ def delete_user(id):
     return jsonify({'data': 'User deleted'})
 
 
-
 # ##############################################################################
 # # Workspace routes:
 
@@ -142,8 +143,9 @@ def list_workspaces():
     if not search:
         workspaces = Workspace.query.all()
     else:
-        #TODO: make this work for case insensitive searches
-        workspaces = Workspace.query.filter(Workspace.readable_name.like(f"%{search}%")).all()
+        # TODO: make this work for case insensitive searches
+        workspaces = Workspace.query.filter(
+            Workspace.readable_name.like(f"%{search}%")).all()
 
     return jsonify(
         {
@@ -158,11 +160,10 @@ def list_workspaces():
     )
 
 
-
 @app.route("/workspaces", methods=["POST"])
 def add_workspace():
     """ Handle add workspace API  """
-    try: 
+    try:
         form = WorkspaceAddForm(csrf_enabled=False, data=request.json)
 
         # If the form has been submitted and is valid, add the new workspace to the DB
@@ -185,7 +186,8 @@ def add_workspace():
 @app.route("/", subdomain="<workspace>", methods=["GET"])
 def get_workspace(workspace):
     """Get a workspace"""
-    workspace = Workspace.query.filter(Workspace.formatted_name == workspace).first()
+    workspace = Workspace.query.filter(
+        Workspace.formatted_name == workspace).first()
     if not workspace:
         return jsonify({"errors": "Workspace not found"}), 404
     return jsonify(data=workspace.to_dict())
@@ -205,7 +207,7 @@ def get_workspace(workspace):
 #             user.email = form.data["email"]
 #             if "image_url" in form.data:
 #                 user.image_url = form.data["image_url"]
-            
+
 #             if "bio" in form.data:
 #                 user.bio = form.data["bio"]
 
@@ -230,10 +232,6 @@ def get_workspace(workspace):
 #     return jsonify({'data': 'User deleted'})
 
 
-
-
-
-
 #####################################################################################
 # Team API routes
 
@@ -241,13 +239,77 @@ def get_workspace(workspace):
 def get_teams(workspace):
     """Get all teams"""
     teams = Team.query.filter(Team.workspace_name == workspace).all()
-    return jsonify({"data": [team.name for team in teams]})
+    return jsonify({"data": [conv_obj_to_dict(team, ['name']) for team in teams]})
 
 
 @app.route("/teams/<int:id>", subdomain="<workspace>", methods=["GET"])
 def get_team(workspace, id):
     """Get a single team"""
-    team = Team.query.filter(Team.workspace_name == workspace, Team.id == id).first()
+    team = Team.query.filter(Team.workspace_name ==
+                             workspace, Team.id == id).first()
+    if not team:
+        return jsonify({"errors": "team not found"}), 404
+    return jsonify({"data": conv_obj_to_dict(team, ['name'])})
+
+
+@app.route("/teams", subdomain="<workspace>", methods=["POST"])
+def add_team(workspace):
+    """Add a team"""
+    form = TeamAddUpdateForm(csrf_enabled=False, data=request.json)
+    if form.validate():
+        name = form.data["name"]
+        team = Team(name=name, workspace_name=workspace)
+        db.session.add(team)
+        db.session.commit()
+        return jsonify({"data": name}), 201
+    return jsonify({"errors": form.errors}), 400
+
+
+@app.route("/teams/<int:id>", subdomain="<workspace>", methods=["PATCH"])
+def update_team(workspace, id):
+    """Update team name"""
+    form = TeamAddUpdateForm(csrf_enabled=False, data=request.json)
+    if form.validate():
+        team = Team.query.filter(
+            Team.workspace_name == workspace, Team.id == id
+        ).first()
+        update_obj_with_data(team, form.data)
+        db.session.commit()
+        return jsonify({"data": team.name})
+    return jsonify({"errors": form.errors}), 400
+
+
+@app.route("/teams/<int:id>", subdomain="<workspace>", methods=["DELETE"])
+def delete_team(workspace, id):
+    """Delete a team"""
+    team = Team.query.filter(Team.workspace_name ==
+                             workspace, Team.id == id).first()
+    if not team:
+        return jsonify({"errors": "team not found"}), 404
+
+    db.session.delete(team)
+    db.session.commit()
+    return jsonify({"data": "team deleted"})
+
+
+#####################################################################################
+# Task API routes
+
+@app.route("/teams/<int:id>/tasks", subdomain="<workspace>", methods=["GET"])
+def get_tasks(workspace, id):
+    """Get all tasks for a team"""
+    team = Team.query.filter(Team.workspace_name ==
+                             workspace, Team.id == id).first()
+    tasks = team.tasks
+    data = [conv_obj_to_dict(task) for task in tasks]
+    return jsonify({"data": data})
+
+
+@app.route("/teams/<int:id>", subdomain="<workspace>", methods=["GET"])
+def get_team(workspace, id):
+    """Get a single team"""
+    team = Team.query.filter(Team.workspace_name ==
+                             workspace, Team.id == id).first()
     if not team:
         return jsonify({"errors": "team not found"}), 404
     return jsonify({"data": team.name})
@@ -283,16 +345,14 @@ def update_team(workspace, id):
 @app.route("/teams/<int:id>", subdomain="<workspace>", methods=["DELETE"])
 def delete_team(workspace, id):
     """Delete a team"""
-    team = Team.query.filter(Team.workspace_name == workspace, Team.id == id).first()
+    team = Team.query.filter(Team.workspace_name ==
+                             workspace, Team.id == id).first()
     if not team:
         return jsonify({"errors": "team not found"}), 404
 
     db.session.delete(team)
     db.session.commit()
     return jsonify({"data": "team deleted"})
-
-
-
 
 
 # from flask_debugtoolbar import DebugToolbarExtension

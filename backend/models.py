@@ -107,6 +107,9 @@ class Team(db.Model):
         nullable=False,
     )
 
+    # Relationship to tasks
+    tasks = db.relationship('Task', backref='team')
+
 
 class Task(db.Model):
     """Task model for bolt"""
@@ -117,17 +120,18 @@ class Task(db.Model):
 
     creator_id = db.Column(db.Integer, nullable=False, db.ForeignKey("users.id", ondelete="cascade"))
 
-    assignee_id = db.Column(db.Integer, nullable=False, db.ForeignKey("users.id", ondelete="cascade"))
+    assignee_id = db.Column(db.Integer, db.ForeignKey(
+        "users.id", ondelete="cascade"))
 
     title = db.Column(db.Text, nullable=False)
 
-    description = db.Column(db.Text, nullable=False)
+    description = db.Column(db.Text)
 
-    priority = db.Column(db.Text, nullable=False)
+    priority = db.Column(db.Text)
 
     status = db.Column(db.Text, nullable=False)
 
-    queue = db.Column(db.Integer, nullable=False)
+    queue = db.Column(db.Integer)
 
     team = db.Column(db.Integer, nullable=False, db.ForeignKey("teams.id", ondelete="cascade"))
 
