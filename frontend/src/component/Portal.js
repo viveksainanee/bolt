@@ -7,4 +7,4 @@ class Portal extends Component {
   }
 }
 
-export default RoutesPortal;
+export default Portal;

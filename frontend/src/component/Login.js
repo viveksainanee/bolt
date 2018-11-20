@@ -3,6 +3,8 @@ import NavBar from './NavBar';
 import './Login.css';
 import Footer from './Footer';
 import { Link } from 'react-router-dom';
+import { connect } from 'react-redux';
+import { getUser } from '../actions';
 
 class Login extends Component {
   constructor(props) {
@@ -34,7 +36,10 @@ class Login extends Component {
   handleSubmit(evt) {
     evt.preventDefault();
     this.validateInputs();
-    console.log('submitting login credentials');
+    this.props.getUser({
+      email: this.state.email,
+      password: this.state.password
+    });
   }
 
   render() {
@@ -48,7 +53,7 @@ class Login extends Component {
               <label htmlFor="email">Email:</label>
               <input
                 className="Login-input"
-                type="text"
+                type="email"
                 name="email"
                 value={this.state.email}
                 onChange={this.handleChange}
@@ -77,4 +82,7 @@ class Login extends Component {
   }
 }
 
-export default Login;
+export default connect(
+  null,
+  { getUser }
+)(Login);
