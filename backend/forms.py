@@ -61,3 +61,10 @@ class TaskUpdateForm(FlaskForm):
     status = StringField("Status")
     queue = IntegerField("Queue")
     team = IntegerField("Team")
+
+
+class WorkspaceUserAddForm(FlaskForm):
+    """Form for adding workspace users"""
+
+    workspace_formatted_name = StringField("Formatted Workspace Name", validators=[DataRequired()])
+    user_id = IntegerField("User Id", validators=[DataRequired()])

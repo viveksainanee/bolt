@@ -8,7 +8,7 @@ from slugify import slugify
 bcrypt = Bcrypt()
 
 
-from forms import UserAddUpdateForm, WorkspaceAddForm, LoginForm, TeamAddUpdateForm, TaskAddForm, TaskUpdateForm
+from forms import UserAddForm, UserUpdateForm, WorkspaceAddUpdateForm, LoginForm, TeamAddUpdateForm, TaskAddForm, TaskUpdateForm, WorkspaceUserAddForm
 from models import db, connect_db, User, Workspace, WorkspaceUser, Team, Task
 
 # Import helper functions
@@ -164,7 +164,7 @@ def list_workspaces():
 def add_workspace():
     """ Handle add workspace API  """
     try:
-        form = WorkspaceAddForm(csrf_enabled=False, data=request.json)
+        form = WorkspaceAddUpdateForm(csrf_enabled=False, data=request.json)
 
         # If the form has been submitted and is valid, add the new workspace to the DB
         if form.validate_on_submit():
@@ -183,53 +183,74 @@ def add_workspace():
         return jsonify({"errors": "Workspace name taken"}), 400
 
 
-@app.route("/", subdomain="<workspace>", methods=["GET"])
-def get_workspace(workspace):
+#need to figure out why this isn't working for new workspaces
+@app.route("/", subdomain="<workspace_formatted_name>", methods=["GET"])
+def get_workspace(workspace_formatted_name):
     """Get a workspace"""
     workspace = Workspace.query.filter(
-        Workspace.formatted_name == workspace).first()
+        Workspace.formatted_name == workspace_formatted_name).first()
     if not workspace:
         return jsonify({"errors": "Workspace not found"}), 404
     return jsonify(data=workspace.to_dict())
 
 
-# @app.route("/", subdomain="<workspace>", methods=["PATCH"])
-# def update_workspace(workspace):
+# @app.route("/", subdomain="<workspace_formatted_name>", methods=["PATCH"])
+# def update_workspace(workspace_formatted_name):
 #     """Update workspace"""
 #     try:
 #         form = WorkspaceAddUpdateForm(csrf_enabled=False, data=request.json)
 #         if form.validate():
-#             workspace = Workspace.query.filter(Workspace.formmated_name == workspace).first()
-
-
-#             user.first_name = form.data["first_name"]
-#             user.last_name = form.data["last_name"]
-#             user.email = form.data["email"]
-#             if "image_url" in form.data:
-#                 user.image_url = form.data["image_url"]
-
-#             if "bio" in form.data:
-#                 user.bio = form.data["bio"]
-
+#             workspace = Workspace.query.filter(Workspace.formatted_name == workspace_formatted_name).first()
+#             workspace.readable_name=form.data["readable_name"]
+#             workspace.formatted_name=slugify(form.data["readable_name"])
+#             db.session.add(workspace)
 #             db.session.commit()
-#             return jsonify({"data": user.to_dict()})
+#             return (jsonify(data=workspace.to_dict()), 201)
 #         else:
 #             return jsonify({"errors": "Missing fields"}), 400
 
 #     except IntegrityError as e:
-#         return jsonify({"errors": "Email taken"}), 400
+#         return jsonify({"errors": str(e)}), 400
 
 
-# @app.route('/users/<int:id>', methods=["DELETE"])
-# def delete_user(id):
-#     """Delete a user"""
-#     user = User.query.filter(User.id == id).first()
-#     if(not user):
-#         return jsonify({'errors': 'User not found'}), 404
+@app.route("/users", subdomain="<workspace_formatted_name>", methods=["GET"])
+def get_workspace_users(workspace_formatted_name):
+    """Get all users for a workspace"""
+    workspace_users = WorkspaceUser.query.filter(WorkspaceUser.workspace_formatted_name == workspace_formatted_name).all()
+    return jsonify({"data": [conv_obj_to_dict(user) for user in workspace_users]})
 
-#     db.session.delete(user)
-#     db.session.commit()
-#     return jsonify({'data': 'User deleted'})
+
+
+@app.route("/users", subdomain="<workspace_formatted_name>", methods=["POST"])
+def add_workspace_user(workspace_formatted_name):
+    """Add a workspace user"""
+    try:
+        form = WorkspaceUserAddForm(csrf_enabled=False, data=request.json)
+        if form.validate():
+            workspace_formatted_name = form.data["workspace_formatted_name"]
+            user_id = form.data["user_id"]
+            workspace_user = WorkspaceUser(user_id=user_id, workspace_formatted_name=workspace_formatted_name)
+            db.session.add(workspace_user)
+            db.session.commit()
+            ret_workspace_user=conv_obj_to_dict(workspace_user)
+            return jsonify({"data": ret_workspace_user}), 201
+        return jsonify({"errors": form.errors}), 400
+    except IntegrityError as e:
+        return jsonify({"errors": "Workspace User already exists"}), 400
+
+
+@app.route("/users/<int:user_id>", subdomain="<workspace_formatted_name>", methods=["DELETE"])
+def delete_workspace_user(workspace_formatted_name, user_id):
+    """Delete a workspace_user"""
+    workspace_user = WorkspaceUser.query.filter(WorkspaceUser.workspace_formatted_name == workspace_formatted_name, WorkspaceUser.user_id == user_id).first()
+    if not workspace_user:
+        return jsonify({"errors": "Workspace user not found"}), 404
+    db.session.delete(workspace_user)
+    db.session.commit()
+    return jsonify({"data": "Workspace user deleted"})
+
+
+
 
 
 #####################################################################################
@@ -466,18 +487,6 @@ def delete_task(workspace, id, task_id):
 #     return redirect("/login")
 
 
-##############################################################################
-# General user routes:
-
-
-# @app.route("/")
-# def home():
-#     workspace_users = []
-#     if g.user:
-#         workspace_users = WorkspaceUser.query.filter(
-#             WorkspaceUser.user_id == g.user.id
-#         ).all()
-#     return render_template("home.html", workspace_users=workspace_users)
 
 
 # @app.route('/users')
