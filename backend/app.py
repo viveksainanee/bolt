@@ -5,8 +5,10 @@ from sqlalchemy.exc import IntegrityError
 from flask_bcrypt import Bcrypt
 from slugify import slugify
 from SECRET import SECRET_KEY
+from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
 
 bcrypt = Bcrypt()
+
 
 
 from forms import UserAddForm, UserUpdateForm, WorkspaceAddUpdateForm, LoginForm, TeamAddUpdateForm, TaskAddForm, TaskUpdateForm, WorkspaceUserAddForm
@@ -27,22 +29,28 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["SQLALCHEMY_ECHO"] = False
 app.config["DEBUG_TB_INTERCEPT_REDIRECTS"] = False
 app.config["SERVER_NAME"] = "localhost.com:5000"
-app.config["SECRET_KEY"] = SECRET_KEY
-
+app.config["JWT_SECRET_KEY"] = SECRET_KEY
+jwt = JWTManager(app)
 connect_db(app)
-
-#####################################################################################
-# User Auth API routes
-
-@app.before_request
-def add_user_to_g():
-
 
 #####################################################################################
 # User API routes
 
+@app.route("/login", methods=["POST"])
+def login():
+    """Login a user"""
+    email = request.json.get('email', None)
+    password = request.json.get('password', None)
+    user = User.query.filter_by(email=email).first()
+    if user:
+        is_auth = bcrypt.check_password_hash(user.password,password)
+        if is_auth:
+            userData = user.to_dict()
+            token = create_access_token(identity=userData['id'])
+            return (jsonify({"data":{"token":token}}), 201)
 
 @app.route("/users", methods=["GET"])
+@jwt_required
 def get_users():
     """Get all users"""
     users = User.query.all()
@@ -82,7 +90,9 @@ def add_user():
             )
             db.session.add(user)
             db.session.commit()
-            return (jsonify(data=user.to_dict()), 201)
+            userData = user.to_dict()
+            token = create_access_token(identity=userData['id'])
+            return (jsonify({"data":{"token":token}}), 201)
 
         return jsonify({"errors": form.errors}), 400
     except IntegrityError as e:
