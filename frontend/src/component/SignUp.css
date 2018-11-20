@@ -1,0 +1,48 @@
+.SignUp {
+  color: rgb(191, 136, 216);
+  height: 100vh;
+}
+
+.SignUp-form-cont {
+  position: absolute;
+  top: 20%;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  text-align: left;
+  width: 300px;
+}
+
+.SignUp-header {
+  font-size: 30px;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.SignUp-input {
+  width: 300px;
+  margin-bottom: 25px;
+}
+
+.SignUp-center {
+  text-align: center;
+}
+
+.SignUp-error {
+  height: 40px;
+  color: rgb(240, 214, 79);
+}
+
+.SignUp-createAccount {
+  margin: 10px;
+}
+
+.SignUp-createAccount a:visited,
+.SignUp-createAccount a:visited {
+  color: rgb(191, 136, 216);
+}
+
+.SignUp-createAccount a:hover {
+  color: rgb(237, 249, 247);
+  text-decoration: none;
+}
