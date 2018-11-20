@@ -7,7 +7,7 @@ class BoltApp extends Component {
   render() {
     // Temporarily hardcoding to only show dashboard
     return (
-      <div className="BoltApp">
+      <div id="BoltApp" className="row">
         <Dashboard />
       </div>
     );

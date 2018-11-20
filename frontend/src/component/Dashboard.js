@@ -7,7 +7,7 @@ class Dashboard extends Component {
   render() {
     // Temporarily hardcoding to only show dashboard
     return (
-      <div className="Dashboard">
+      <div className="container-fluid row">
         <Sidebar />
         <Workspace />
       </div>
