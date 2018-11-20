@@ -31,6 +31,7 @@
 .SignUp-error {
   height: 40px;
   color: rgb(240, 214, 79);
+  line-height: 18px;
 }
 
 .SignUp-createAccount {

@@ -13,9 +13,8 @@ class Login extends Component {
   }
 
   validateInputs() {
-    console.log('getting here');
     //no input
-    if (this.state.email === '' || this.state.password === '') {
+    if (!this.state.email || !this.state.password) {
       this.setState({ error: 'Please provide a valid email and password' });
       // return false;
     } else {

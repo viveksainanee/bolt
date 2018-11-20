@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import NavBar from './NavBar';
 import './SignUp.css';
 import Footer from './Footer';
-// import { Link } from 'react-router-dom';
 
 class SignUp extends Component {
   constructor(props) {
@@ -15,15 +14,16 @@ class SignUp extends Component {
       error: ''
     };
     this.handleChange = this.handleChange.bind(this);
-    this.validateInputs = this.validateInputs.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
   }
 
   validateInputs() {
-    console.log('getting here');
     //no input
-    if (this.state.email === '' || this.state.password === '') {
-      this.setState({ error: 'Please provide a valid email and password' });
+    if (!this.state.email || !this.state.password) {
+      this.setState({ error: 'Please fill in each section' });
       // return false;
+    } else {
+      this.setState({ error: '' });
     }
     // return true;
   }
@@ -32,15 +32,14 @@ class SignUp extends Component {
 
   handleChange(evt) {
     this.setState({
-      [evt.target.name]: this.state.value
+      [evt.target.name]: evt.target.value
     });
   }
 
   handleSubmit(evt) {
     evt.preventDefault();
-    console.log('submitting');
-    // validateInputs();
-    console.log('submitting SignUp credentials');
+    this.validateInputs();
+    console.log('submitting signup credentials');
   }
 
   render() {
@@ -50,7 +49,7 @@ class SignUp extends Component {
           <NavBar />
           <div className="SignUp-form-cont">
             <div className="SignUp-header">SignUp</div>
-            <form onSubmit={this.validateInputs}>
+            <form onSubmit={this.handleSubmit}>
               <label htmlFor="first_name">First Name:</label>
               <input
                 className="SignUp-input"
@@ -86,9 +85,6 @@ class SignUp extends Component {
               <div className="SignUp-center">
                 <div className="SignUp-error">{this.state.error}</div>
                 <button className="SignUp-button">SignUp</button>
-                <div className="SignUp-createAccount">
-                  {/* Don't have an account? <Link to="/signup">Create one.</Link> */}
-                </div>
               </div>
             </form>
           </div>

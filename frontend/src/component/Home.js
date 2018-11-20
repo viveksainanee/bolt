@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import NavBar from './NavBar';
 import { NavLink } from 'react-router-dom';
-// import { Button } from 'reactstrap';
 import './Home.css';
 import Footer from './Footer';
 
