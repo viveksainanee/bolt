@@ -14,10 +14,9 @@ class TaskColumn extends Component {
 
   addTaskToColumn(task) {
     console.log(task);
-
-    // this.setState({
-    //   tasks: [...this.state.tasks, task]
-    // });
+    this.setState({
+      tasks: [...this.state.tasks, task]
+    });
   }
 
   render() {
