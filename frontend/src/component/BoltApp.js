@@ -6,14 +6,10 @@ import './BoltApp.css';
 class BoltApp extends Component {
   render() {
     // Temporarily hardcoding to only show dashboard
-    // return (
-    //   <div className="BoltApp">
-    //     <Dashboard />
-    //   </div>
-    // );
     return (
-      <div className="BoltApp row">
-        {this.props.currUser ? <Dashboard /> : <Portal />}
+      <div className="BoltApp">
+        <Dashboard />
+        {/* {this.props.currUser ? <Dashboard /> : <Portal />} */}
       </div>
     );
   }

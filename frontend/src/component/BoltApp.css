@@ -1,3 +1,4 @@
-#BoltApp {
-  height: 100vh;
+.BoltApp {
+  min-height: 100vh;
+  border: 1px solid green;
 }
