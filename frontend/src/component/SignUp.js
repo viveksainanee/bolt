@@ -69,7 +69,7 @@ class SignUp extends Component {
               <label htmlFor="email">Email:</label>
               <input
                 className="SignUp-input"
-                type="text"
+                type="email"
                 name="email"
                 value={this.state.email}
                 onChange={this.handleChange}
