@@ -4,6 +4,7 @@ from flask import Flask, render_template, request, flash, redirect, session, g, 
 from sqlalchemy.exc import IntegrityError
 from flask_bcrypt import Bcrypt
 from slugify import slugify
+from SECRET import SECRET_KEY
 
 bcrypt = Bcrypt()
 
@@ -26,8 +27,15 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["SQLALCHEMY_ECHO"] = False
 app.config["DEBUG_TB_INTERCEPT_REDIRECTS"] = False
 app.config["SERVER_NAME"] = "localhost.com:5000"
+app.config["SECRET_KEY"] = SECRET_KEY
 
 connect_db(app)
+
+#####################################################################################
+# User Auth API routes
+
+@app.before_request
+def add_user_to_g():
 
 
 #####################################################################################
