@@ -15,8 +15,8 @@ class NavBar extends Component {
           <span className="NavBar-login">
             <NavLink to="/login">login</NavLink>
           </span>
-          <span className="NavBar-getStarted">
-            <NavLink to="/getstarted">get started</NavLink>
+          <span className="NavBar-signUp">
+            <NavLink to="/signup">sign up</NavLink>
           </span>
         </div>
       </div>

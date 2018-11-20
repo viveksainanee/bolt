@@ -26,7 +26,7 @@
 }
 
 .NavBar-login a:visited,
-.NavBar-getStarted a:visited {
+.NavBar-signUp a:visited {
   color: rgb(191, 136, 216);
 }
 
@@ -34,12 +34,12 @@
   color: rgb(237, 249, 247);
 }
 
-.NavBar-getStarted a.active {
+.NavBar-signUp a.active {
   color: rgb(237, 249, 247);
 }
 
 .NavBar-login a:hover,
-.NavBar-getStarted a:hover {
+.NavBar-signUp a:hover {
   text-decoration: none;
   color: rgb(237, 249, 247);
 }
