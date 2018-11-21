@@ -1,7 +1,6 @@
 .Sidebar {
   background-color: white;
-  position: relative;
   border: 1px solid red;
-  width: 200px;
-  height: 100vh;
+  width: 20%;
+  height: 100%;
 }
