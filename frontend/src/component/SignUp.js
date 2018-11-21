@@ -43,6 +43,7 @@ class SignUp extends Component {
   }
 
   render() {
+    console.log('signup rendered');
     return (
       <div>
         <div className="SignUp">

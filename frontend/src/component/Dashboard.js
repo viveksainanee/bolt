@@ -11,7 +11,6 @@ class Dashboard extends Component {
         <Workspace />
       </div>
     );
-    // return <div>{this.props.currUser ? <Dashboard /> : <Portal />}</div>;
   }
 }
 

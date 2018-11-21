@@ -6,6 +6,7 @@ import Footer from './Footer';
 
 class Home extends Component {
   render() {
+    console.log('rendered home');
     return (
       <div>
         <div className="Home-cont">

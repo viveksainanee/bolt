@@ -7,13 +7,19 @@ import { getUser } from '../actions';
 
 class BoltApp extends Component {
   async componentDidMount() {
+    console.log('component did mount');
     if (localStorage.getItem('currUser')) {
       await this.props.getUser();
+      console.log('found a user');
     }
+    console.log('no user');
   }
 
   render() {
-    return <div>{this.props.currUser ? <Dashboard /> : <Portal />}</div>;
+    // return <Portal />;
+    console.log('Boltapp rendered');
+    // return <div>{this.props.currUser ? <Dashboard /> : <Portal />}</div>;
+    return <Dashboard />;
   }
 }
 

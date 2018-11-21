@@ -4,7 +4,7 @@ import Home from './Home';
 import Login from './Login';
 import SignUp from './SignUp';
 
-class Routes extends Component {
+class RoutesPortal extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -14,6 +14,7 @@ class Routes extends Component {
   }
 
   render() {
+    console.log('RoutesPortal Rendered');
     return (
       <div>
         <Switch>
@@ -26,4 +27,4 @@ class Routes extends Component {
   }
 }
 
-export default Routes;
+export default RoutesPortal;

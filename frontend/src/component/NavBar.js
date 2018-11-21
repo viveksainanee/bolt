@@ -4,6 +4,7 @@ import './NavBar.css';
 
 class NavBar extends Component {
   render() {
+    console.log('navbar rendered');
     return (
       <div className="NavBar">
         <div className="NavBar-logo-cont">
