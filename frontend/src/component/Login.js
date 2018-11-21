@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import NavBar from './NavBar';
 import './Login.css';
 import Footer from './Footer';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { getUser } from '../actions';
 
@@ -15,6 +15,7 @@ class Login extends Component {
   }
 
   validateInputs() {
+    // TODO: need a validation for no user
     //no input
     if (!this.state.email || !this.state.password) {
       this.setState({ error: 'Please provide a valid email and password' });
@@ -40,6 +41,8 @@ class Login extends Component {
       email: this.state.email,
       password: this.state.password
     });
+    this.props.history.push('/');
+    console.log(this.props);
   }
 
   render() {

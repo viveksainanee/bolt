@@ -50,6 +50,7 @@ def login():
             userData = user.to_dict()
             token = create_access_token(identity=userData['id'])
             return (jsonify({"data":{"token":token}}), 201)
+    return "No user found"
 
 @app.route("/users", methods=["GET"])
 @jwt_required

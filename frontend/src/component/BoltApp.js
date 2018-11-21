@@ -4,34 +4,33 @@ import Portal from './Portal';
 import { connect } from 'react-redux';
 import './BoltApp.css';
 import { getUser } from '../actions';
-import Colors from './Colors';
+import { withRouter } from 'react-router-dom';
 
 class BoltApp extends Component {
   async componentDidMount() {
-    console.log('component did mount');
     if (localStorage.getItem('currUser')) {
+      console.log('currUser in component Did Mount', this.props.currUser);
       await this.props.getUser();
-      console.log('found a user');
+      console.log('this.props in cdm is', this.props);
     }
-    console.log('no user');
+  }
+
+  componentDidUpdate() {
+    console.log('component did update ran');
   }
 
   render() {
-    // return <Portal />;
-    console.log('Boltapp rendered');
-    // return <div>{this.props.currUser ? <Dashboard /> : <Portal />}</div>;
-    return (
-      <div>
-        <Dashboard />
-      </div>
-    );
+    console.log('curr User is', this.props.currUser);
+    return <div>{this.props.currUser ? <Dashboard /> : <Portal />}</div>;
   }
 }
 
 function mapStateToProps(state) {
   return { currUser: state.currUser };
 }
-export default connect(
-  mapStateToProps,
-  { getUser }
-)(BoltApp);
+export default withRouter(
+  connect(
+    mapStateToProps,
+    { getUser }
+  )(BoltApp)
+);
