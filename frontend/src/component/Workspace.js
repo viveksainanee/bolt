@@ -6,11 +6,13 @@ import TaskColumn from './TaskColumn';
 class Workspace extends Component {
   render() {
     return (
-      <div className="Workspace">
+      <div className="Workspace col-8">
         <Topbar />
-        <TaskColumn type="To Do" />
-        {/* <TaskColumn type="In Progress" />
-        <TaskColumn type="Complete" /> */}
+        <div className="TaskColumnRow">
+          <TaskColumn type="To Do" />
+          <TaskColumn type="In Progress" />
+          <TaskColumn type="Complete" />
+        </div>
       </div>
     );
   }

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import AddTaskForm from './AddTaskForm';
+import Task from './Task';
 import './TaskColumn.css';
 
 class TaskColumn extends Component {
@@ -14,18 +15,20 @@ class TaskColumn extends Component {
 
   addTaskToColumn(task) {
     console.log(task);
-    this.setState({
-      tasks: [...this.state.tasks, task]
-    });
+    console.log(this.state);
+    this.setState(st => ({
+      tasks: [...st.tasks, task]
+    }));
   }
 
   render() {
-    let tasks = this.state.tasks;
+    let titles = this.state.tasks.map(task => <Task {...task} />);
+
     return (
       <div className="TaskColumn">
         <h2> {this.props.type}</h2>
+        {titles}
         <div>
-          {tasks}
           <AddTaskForm addTaskToColumn={this.addTaskToColumn} />
         </div>
       </div>
