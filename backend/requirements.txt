@@ -8,6 +8,7 @@ decorator==4.3.0
 Faker==0.9.1
 Flask==1.0.2
 Flask-Bcrypt==0.7.1
+Flask-Cors==3.0.7
 Flask-DebugToolbar==0.10.1
 Flask-JWT-Extended==3.13.1
 Flask-SQLAlchemy==2.3.2
@@ -29,12 +30,14 @@ pycparser==2.19
 Pygments==2.2.0
 PyJWT==1.6.4
 python-dateutil==2.7.3
+python-slugify==1.2.6
 simplegeneric==0.8.1
 six==1.11.0
 slugify==0.0.1
 SQLAlchemy==1.2.12
 text-unidecode==1.2
 traitlets==4.3.2
+Unidecode==1.0.22
 wcwidth==0.1.7
 Werkzeug==0.14.1
 WTForms==2.2.1

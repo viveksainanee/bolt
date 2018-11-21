@@ -1,18 +1,26 @@
 import React, { Component } from 'react';
 import Dashboard from './Dashboard';
 import Portal from './Portal';
+import { connect } from 'react-redux';
 import './BoltApp.css';
+import { getUser } from '../actions';
 
 class BoltApp extends Component {
+  async componentDidMount() {
+    if (localStorage.getItem('currUser')) {
+      await this.props.getUser();
+    }
+  }
+
   render() {
-    // Temporarily hardcoding to only show dashboard
-    // return (
-    //   <div className="BoltApp">
-    //     <Dashboard />
-    //   </div>
-    // );
     return <div>{this.props.currUser ? <Dashboard /> : <Portal />}</div>;
   }
 }
 
-export default BoltApp;
+function mapStateToProps(state) {
+  return { currUser: state.currUser };
+}
+export default connect(
+  mapStateToProps,
+  { getUser }
+)(BoltApp);
