@@ -1,0 +1,39 @@
+@import '../config.scss';
+
+.Topbar {
+  position: fixed;
+  top: 0;
+  color: $lightPurple;
+  height: 40px;
+  background-color: $darkPurple;
+  display: flex;
+  flex-direction: inline-block;
+  justify-content: space-between;
+  align-items: center;
+  padding-left: 25px;
+  padding-right: 25px;
+}
+
+#Topbar-teamTasks,
+#Topbar-myTasks {
+  margin-right: 50px;
+}
+
+#Topbar-teamTasks a:visited,
+#Topbar-logOut a:visited {
+  color: $lightPurple;
+}
+
+#Topbar-teamTasks a.active {
+  color: $white;
+}
+
+#Topbar-logOut a.active {
+  color: $white;
+}
+
+#Topbar-teamTasks a:hover,
+#Topbar-logOut a:hover {
+  text-decoration: none;
+  color: $white;
+}

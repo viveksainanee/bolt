@@ -1,3 +1,5 @@
+@import '../_config.scss';
+
 .NavBar {
   display: flex;
   flex-direction: inline-block;
@@ -6,19 +8,19 @@
   padding-left: 25px;
   padding-right: 25px;
   height: 40px;
-  color: rgb(191, 136, 216);
+  color: $lightPurple;
 }
 
 .NavBar-logo a.active,
 .NavBar-logo a:hover {
   text-decoration: none;
-  color: rgb(240, 214, 79);
+  color: $yellow;
 }
 
 .NavBar-logo {
   font-family: 'Orbitron', sans-serif;
   font-size: 18px;
-  color: rgb(237, 249, 247);
+  color: $white;
 }
 
 .NavBar-login {
@@ -27,19 +29,19 @@
 
 .NavBar-login a:visited,
 .NavBar-signUp a:visited {
-  color: rgb(191, 136, 216);
+  color: $lightPurple;
 }
 
 .NavBar-login a.active {
-  color: rgb(237, 249, 247);
+  color: $white;
 }
 
 .NavBar-signUp a.active {
-  color: rgb(237, 249, 247);
+  color: $white;
 }
 
 .NavBar-login a:hover,
 .NavBar-signUp a:hover {
   text-decoration: none;
-  color: rgb(237, 249, 247);
+  color: $white;
 }

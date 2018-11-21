@@ -1,0 +1,15 @@
+@import '../_config.scss';
+
+.TaskColumn {
+  color: $white;
+  margin: 10px;
+  min-width: 200px;
+  width: calc(100% - 200px);
+  height: 100vh;
+  border: 1px solid $lightPurple;
+}
+
+.TaskColumn-type {
+  font-size: 20px;
+  margin: 10px;
+}
