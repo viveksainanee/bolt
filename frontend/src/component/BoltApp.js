@@ -4,6 +4,7 @@ import Portal from './Portal';
 import { connect } from 'react-redux';
 import './BoltApp.css';
 import { getUser } from '../actions';
+import Colors from './Colors';
 
 class BoltApp extends Component {
   async componentDidMount() {
@@ -19,7 +20,11 @@ class BoltApp extends Component {
     // return <Portal />;
     console.log('Boltapp rendered');
     // return <div>{this.props.currUser ? <Dashboard /> : <Portal />}</div>;
-    return <Dashboard />;
+    return (
+      <div>
+        <Dashboard />
+      </div>
+    );
   }
 }
 

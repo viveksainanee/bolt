@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import AddTaskForm from './AddTaskForm';
 import Task from './Task';
-import './TaskColumn.css';
+import './TaskColumn.scss';
 
 class TaskColumn extends Component {
   constructor(props) {
@@ -26,7 +26,7 @@ class TaskColumn extends Component {
 
     return (
       <div className="TaskColumn">
-        <h2> {this.props.type}</h2>
+        <div className="TaskColumn-type">{this.props.type}</div>
         {titles}
         <div>
           <AddTaskForm addTaskToColumn={this.addTaskToColumn} />
