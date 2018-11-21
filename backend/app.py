@@ -6,6 +6,8 @@ from flask_bcrypt import Bcrypt
 from slugify import slugify
 from SECRET import SECRET_KEY
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
+from flask_cors import CORS
+
 
 bcrypt = Bcrypt()
 
@@ -19,6 +21,7 @@ from helpers import conv_obj_to_dict, update_obj_with_data
 
 
 app = Flask(__name__)
+CORS(app)
 
 # Get DB_URI from environ variable (useful for production/testing) or,
 # if not set there, use development local db.
@@ -28,7 +31,6 @@ app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get(
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["SQLALCHEMY_ECHO"] = False
 app.config["DEBUG_TB_INTERCEPT_REDIRECTS"] = False
-app.config["SERVER_NAME"] = "localhost.com:5000"
 app.config["JWT_SECRET_KEY"] = SECRET_KEY
 jwt = JWTManager(app)
 connect_db(app)

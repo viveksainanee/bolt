@@ -5,7 +5,7 @@ const initialState = { currUser: null, workspaces: [] };
 function rootReducer(state = initialState, action) {
   switch (action.type) {
     case GOT_USER:
-      return { ...state, currUser: action.payload.data };
+      return { ...state, currUser: action.payload };
     default:
       return state;
   }
