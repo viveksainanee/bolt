@@ -43,6 +43,7 @@ class Login extends Component {
   }
 
   render() {
+    console.log('Login rendered');
     return (
       <div>
         <div className="Login">
