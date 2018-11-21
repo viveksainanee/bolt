@@ -19,7 +19,7 @@ class RoutesPortal extends Component {
       <div>
         <Switch>
           <Route exact path="/" render={() => <Home />} />
-          <Route exact path="/login" render={() => <Login />} />
+          <Route exact path="/login" render={props => <Login {...props} />} />
           <Route exact path="/signup" render={() => <SignUp />} />
         </Switch>
       </div>

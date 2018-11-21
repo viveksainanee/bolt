@@ -4,6 +4,7 @@ import BoltAPI from './BoltAPI';
 export function getUser(data) {
   return async function(dispatch) {
     let user = await BoltAPI.getUserFromAPI(data);
+    console.log('user is', user);
     dispatch(gotUser(user));
   };
 }
